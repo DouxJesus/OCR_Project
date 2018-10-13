@@ -1,15 +1,21 @@
-#ifndef BITMAP__
-#define BITMAP__
+#ifndef BITMAP_H
+#define BITMAP_H
 
-#define BIT (8*sizeof(byte))
-#define BITMAP_NOTFOUND -1
+typedef struct Pixel
+{
+    unsigned char r,g,b;
+} Pixel;
 
-typedef enum{false=0, true} bool;
-typedef unsigned char byte;
+typedef struct Bitmap
+{
+    int w, h;
+    Pixel* tab;
+} Bitmap;
 
-bool bitmapGet   (byte *, int);
-void bitmapSet   (byte *, int);
-void bitmapReset (byte *, int);
-int  bitmapSearch(byte *, bool, int, int);
-
+//appel fonctions
+Bitmap* NouvelleImage(int w,int h);
+void SetPixel(Bitmap* img,int i,int j,Pixel p);
+Pixel GetPixel(Bitmap* img,int i,int j);
+Bitmap* Charger(const char* fichier);
+int Sauver(Bitmap* I,const char* fichier);
 #endif
