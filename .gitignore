@@ -1,6 +1,6 @@
 #CMakeFile
 /cmake-build-debug
-
+./idea
 
 # Prerequisites
 *.d
