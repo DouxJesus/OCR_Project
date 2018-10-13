@@ -18,8 +18,8 @@ int main() {
             SetPixel(I,i,j,p);
         }
     }
-    Bitmap* I2 = Charger("test_img1.bmp");
+    Bitmap* I2 = Charger("../Images_test/RTEmagicC_texte-ponctuation_02.bmp");
     BlackAndWhite(I2);
-    Sauver(I2,"test4.bmp");
+    Sauver(I2,"../Images_test/result/test7.bmp");
     return 0;
 }
