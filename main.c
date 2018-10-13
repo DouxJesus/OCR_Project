@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "Bitmap/bitmap.h"
+#include "ImageProcessing/BlackAndWhite.h"
 
 int main() {
     printf("Hello, OCR Project!\n");
@@ -17,7 +18,8 @@ int main() {
             SetPixel(I,i,j,p);
         }
     }
-    //Bitmap* I = Charger("test.bmp");
-    Sauver(I,"test.bmp");
+    Bitmap* I2 = Charger("test_img1.bmp");
+    BlackAndWhite(I2);
+    Sauver(I2,"test4.bmp");
     return 0;
 }
