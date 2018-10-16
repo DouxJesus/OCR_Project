@@ -1,0 +1,3 @@
+/home/marine/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/marine/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/marine/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles/POC.dir
