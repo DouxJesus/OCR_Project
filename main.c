@@ -1,25 +1,30 @@
 #include <stdio.h>
-#include "Bitmap/bitmap.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
 #include "ImageProcessing/BlackAndWhite.h"
+#include "Image_BMP/pixel_operations.h"
+#include "Image_BMP/BMP.h"
 
 int main() {
     printf("Hello, OCR Project!\n");
 
-    int i,j;
-    Bitmap* I = NouvelleImage(256,256);
-    for(i=0;i<256;i++)
-    {
-        for(j=0;j<256;j++)
-        {
-            Pixel p;
-            p.r = i;
-            p.g = j;
-            p.b = 0;
-            SetPixel(I,i,j,p);
-        }
-    }
-    Bitmap* I2 = Charger("../Images_test/RTEmagicC_texte-ponctuation_02.bmp");
-    BlackAndWhite(I2);
-    Sauver(I2,"../Images_test/result/test7.bmp");
+    SDL_Surface* image_surface;
+    SDL_Surface* screen_surface;
+
+    init_sdl();
+
+    image_surface = load_image("../Images_test/RTEmagicC_texte-ponctuation_02.bmp");
+    screen_surface = display_image(image_surface);
+
+    wait_for_keypressed();
+
+    to_grayscale(image_surface);
+
+    update_surface(screen_surface, image_surface);
+
+    wait_for_keypressed();
+
+    SDL_FreeSurface(image_surface);
+    SDL_FreeSurface(screen_surface);
     return 0;
 }
