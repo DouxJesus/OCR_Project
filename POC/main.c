@@ -1,6 +1,14 @@
 #include <stdio.h>
+#include "learning.h"
 
 int main() {
-    printf("Hello, World!\n");
+    Neurone xor;
+    initialize(xor);
+    for (int i = 0; i < 10000; i++)
+    {
+        propagation(xor);
+        retro(xor);
+    }
+    printf("%f + %f = %f", xor.x, xor.y, xor.z);
     return 0;
 }
