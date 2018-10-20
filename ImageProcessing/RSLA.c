@@ -22,39 +22,92 @@ SDL_Surface* RSLA(SDL_Surface *img){
 //horizontal -> bool -> define if do horizontal pass (true) or vertical pass(false)
 SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
 	SDL_Surface *output = NULL;
-
+	output = InitSurfaceFromAnother(img, output); //Init output with img's dimension
 	int width, height;
 	width = img->w;
 	height= img->h;
 	output.h = height;
 	output.w = width;
 
+
+	//If the surface must be locked
+    if( SDL_MUSTLOCK( surface ) )
+    {
+        //Lock the surface
+        SDL_LockSurface( surface );
+    }
+
+
 	if(horizontal){
 		//DO HORIZONTAL PASS
-		//Go through columns
-    	for( int x = 0, rx = output->w - 1; x < output->w; x++, rx-- )
-    	{
-        	//Go through rows
-        	for( int y = 0, ry = output->h - 1; y < output->h; y++, ry-- )
-        	{
-            	//Get pixel
+    	//Go through rows
+        for( int y = 0; y < output->h; y++)
+        {
+        	int adjacent_pix = 0;
+        	//Go through columns
+			for( int x = 0; x < output->w; x++ )
+   			{
+        		//Get pixel
             	Uint32 pixel = get_pixel(img, x, y);
             	Uint8 r, g, b;
-				SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-            	if(r > 127 && g > 127 && b > 127){
+				SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            	if(r < 127 && g < 127 && b < 127){
             		//Pixel is black
+            		put_pixel(output, x, y, pixel);
+            		if(adjacent_pix <= threshold){
+            			while(adjacent_pix > 0){
+            				put_pixel(output, x - adjacent_pix, y, pixel)
+            				adjacent_pix--;
+            			}
+            		}
+            		else{
+            			adjacent_pix = 0
+            		}
             	}
             	else{
-            		//Pixel is White
+            		adjacent_pix++;
             	}
-
-            	
-        	}
-    	}
+   			}	
+       	}
 	}
 	else {
 		//DO VERTICAL PASS
+		for( int x = 0; x < output->w; x++ )
+        {
+        	int adjacent_pix = 0;
+			for( int y = 0; y < output->h; y++)
+   			{
+            	Uint32 pixel = get_pixel(img, x, y);
+            	Uint8 r, g, b;
+				SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            	if(r < 127 && g < 127 && b < 127){
+            		//Pixel is black
+            		put_pixel(output, x, y, pixel);
+            		if(adjacent_pix <= threshold){
+            			while(adjacent_pix > 0){
+            				put_pixel(output, x, y - adjacent_pix, pixel)
+            				adjacent_pix--;
+            			}
+            		}
+            		else{
+            			adjacent_pix = 0
+            		}
+            	}
+            	else{
+            		adjacent_pix++;
+            	}
+   			}	
+       	}
+
 	}
+
+	//Unlock surface
+    if( SDL_MUSTLOCK( surface ) )
+    {
+        SDL_UnlockSurface( surface );
+    }
+
+	return output;
 
 }
 
