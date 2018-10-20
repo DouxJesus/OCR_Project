@@ -17,13 +17,33 @@ int main() {
     screen_surface = display_image(image_surface);
 
     wait_for_keypressed();
-
+    /////////////////////////////////////////////////
     to_grayscale(image_surface);
 
     update_surface(screen_surface, image_surface);
 
     wait_for_keypressed();
+    /////////////////////////////////////////////////
+    gammaCorrection(image_surface);
 
+    update_surface(screen_surface, image_surface);
+
+    wait_for_keypressed();
+    /////////////////////////////////////////////////
+    BlackAndWhite(image_surface);
+
+    update_surface(screen_surface, image_surface);
+
+    wait_for_keypressed();
+
+    /////////////////////////////////////////////////
+   image_surface = RSLA(image_surface);
+
+    update_surface(screen_surface, image_surface);
+
+    wait_for_keypressed();
+
+    /////////////////////////////////////////////////
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
     return 0;
