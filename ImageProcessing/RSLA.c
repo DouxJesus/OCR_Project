@@ -66,6 +66,7 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
             		}
             	}
             	else{
+					put_pixel(output, x, y, 255);
             		adjacent_pix++;
             	}
    			}	
@@ -95,6 +96,8 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
             		}
             	}
             	else{
+					put_pixel(output, x, y, 255);
+
             		adjacent_pix++;
             	}
    			}	

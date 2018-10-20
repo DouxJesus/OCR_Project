@@ -38,12 +38,14 @@ int main() {
     wait_for_keypressed();
 
     /////////////////////////////////////////////////
-   image_surface = Process(image_surface, 5, 1);
-
+    image_surface = Process(image_surface, 10, 1);
     update_surface(screen_surface, image_surface);
-
     wait_for_keypressed();
 
+    /////////////////////////////////////////////////
+    image_surface = Process(image_surface, 20, 0);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
     /////////////////////////////////////////////////
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
