@@ -13,7 +13,7 @@ int main() {
 
     init_sdl();
 
-    image_surface = load_image("../Images_test/RTEmagicC_texte-ponctuation_02.bmp");
+    image_surface = load_image("Images_test/RTEmagicC_texte-ponctuation_02.bmp");
     screen_surface = display_image(image_surface);
 
     wait_for_keypressed();
