@@ -43,6 +43,7 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
     	//Go through rows
         for( int y = 0; y < output->h; y++)
         {
+        	int adjacent_pix = 0;
         	//Go through columns
 			for( int x = 0; x < output->w; x++ )
    			{
@@ -52,67 +53,51 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
 				SDL_GetRGB(pixel, img->format, &r, &g, &b);
             	if(r < 127 && g < 127 && b < 127){
             		//Pixel is black
-            		put_pixel(output, x, y, pixel)
+            		put_pixel(output, x, y, pixel);
+            		if(adjacent_pix <= threshold){
+            			while(adjacent_pix > 0){
+            				put_pixel(output, x - adjacent_pix, y, pixel)
+            				adjacent_pix--;
+            			}
+            		}
+            		else{
+            			adjacent_pix = 0
+            		}
             	}
             	else{
-            		//Pixel is White
-            		//Check if there is less or equal than threshold adjacent white pixels
-            		int left_adjacent_pix = 0;
-            		int index = x - 1;
-            		int goOn = 1;
-            		//Check on left side adjacent pix
-            		while(index >= 0 && goOn == 1){
-            			if(left_adjacent_pix > threshold){
-            				//TOOMUCH -> stop
-            				left_adjacent_pix = -1;
-            				goOn = 0;
-            			}
-            			Uint32 c_pixel = get_pixel(img, index, y);
-            			Uint8 cr,cg, cb;
-						SDL_GetRGB(c_pixel, img->format, &cr, &cg, &cb);
-            			if(cr > 127 && cg > 127 && cb > 127){
-            				//Pixel is white
-            				left_adjacent_pix++;
-            			}
-            			else
-            			{
-            				//Pixel is black -> stop
-            				goOn = 0;
-            			}
-            			index--;
-            		}
-
-            		index = x + 1;
-            		goOn = 1;
-            		int right_adjacent_pix = 0;
-            		while(index < width - 1 && goOn == 1){
-            			if(right_adjacent_pix > threshold){
-            				//TOOMUCH -> stop
-            				left_adjacent_pix = -1;
-            				goOn = 0;
-            			}
-            			Uint32 c_pixel = get_pixel(img, index, y);
-            			Uint8 cr,cg, cb;
-						SDL_GetRGB(c_pixel, img->format, &cr, &cg, &cb);
-            			if(cr > 127 && cg > 127 && cb > 127){
-            				//Pixel is white
-            				right_adjacent_pix++;
-            			}
-            			else
-            			{
-            				//Pixel is black -> stop
-            				goOn = 0;
-            			}
-            			index--;
-            		}
-
+            		adjacent_pix++;
             	}
    			}	
        	}
 	}
 	else {
-		//NOT FINISHED
 		//DO VERTICAL PASS
+		for( int x = 0; x < output->w; x++ )
+        {
+        	int adjacent_pix = 0;
+			for( int y = 0; y < output->h; y++)
+   			{
+            	Uint32 pixel = get_pixel(img, x, y);
+            	Uint8 r, g, b;
+				SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            	if(r < 127 && g < 127 && b < 127){
+            		//Pixel is black
+            		put_pixel(output, x, y, pixel);
+            		if(adjacent_pix <= threshold){
+            			while(adjacent_pix > 0){
+            				put_pixel(output, x, y - adjacent_pix, pixel)
+            				adjacent_pix--;
+            			}
+            		}
+            		else{
+            			adjacent_pix = 0
+            		}
+            	}
+            	else{
+            		adjacent_pix++;
+            	}
+   			}	
+       	}
 
 	}
 
