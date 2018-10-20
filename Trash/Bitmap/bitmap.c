@@ -1,14 +1,8 @@
 #include "bitmap.h"
 #include <stdio.h>
-
-
-
-#define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "bitmap.h"
 
 Bitmap* NouvelleImage(int w,int h)
 {
@@ -41,25 +35,25 @@ typedef short int16;
 
 struct BMPImHead
 {
-    int32 size_imhead;
-    int32 width;
-    int32 height;
+    int size_imhead;
+    int width;
+    int height;
     int16 nbplans; // toujours 1
     int16 bpp;
-    int32 compression;
-    int32 sizeim;
-    int32 hres;
-    int32 vres;
-    int32 cpalette;
-    int32 cIpalette;
+    int compression;
+    int sizeim;
+    int hres;
+    int vres;
+    int cpalette;
+    int cIpalette;
 };
 
 struct BMPHead
 {
     char signature[2];
-    int32 taille;
-    int32 rsv;
-    int32 offsetim;
+    int taille;
+    int rsv;
+    int offsetim;
     struct BMPImHead imhead;
 };
 

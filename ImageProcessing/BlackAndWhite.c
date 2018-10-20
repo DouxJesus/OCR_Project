@@ -3,47 +3,62 @@
 //
 
 #include "BlackAndWhite.h"
+#include "../Image_BMP/pixel_operations.h"
+#include "../Image_BMP/BMP.h"
 
-Pixel ToBlackOrWhite(Bitmap* img, int i, int j, int seuil)
+Uint32 ToBlackOrWhite(SDL_Surface* img, unsigned int i, unsigned int j, int seuil)
 {
-    Pixel p = GetPixel(img, i, j);
-    int g = (p.b + p.g + p.r) / 3;
-    if (g > seuil)
-    {
-        p.b = 255;
-        p.r = 255;
-        p.g = 255;
-    }
-    else {
-        p.b = 0;
-        p.r = 0;
-        p.g = 0;
-    }
+    Uint32 pixel = get_pixel(img, i, j);
+    Uint8 r, g, b;
+    SDL_GetRGB(pixel, img->format, &r, &g, &b);
+    Uint8 average = (r + g + b) / (Uint8) 3;
 
-    return p;
+    if (average > seuil)
+        pixel = SDL_MapRGB(img->format, 255, 255, 255);
+    else
+        pixel = SDL_MapRGB(img->format, 0, 0, 0);
+
+    return pixel;
 
 }
 
-
-void BlackAndWhite(Bitmap* img)
+void to_grayscale(SDL_Surface *img)
 {
-    int height = img->h;
-    int weight = img->w;
-    for (int i = 0; i < weight; ++i) {
-        for (int j = 0; j < height; ++j) {
-            SetPixel(img, i, j, ToBlackOrWhite(img, i, j, 255/2));
+    unsigned int width = (unsigned int) img->w;
+    unsigned int height = (unsigned int) img->h;
+    for (int unsigned i = 0; i < width; i++) {
+        for (unsigned int j = 0; j < height; j++) {
+            Uint32 pixel = get_pixel(img, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            Uint8 average = (Uint8) (0.3*r + 0.59*g + 0.11*b);
+            pixel = SDL_MapRGB(img->format, average, average, average);
+            put_pixel(img, i, j, pixel);
         }
     }
 }
 
 
-void BlackAndWhiteRelative(Bitmap* img)
+void BlackAndWhite(SDL_Surface* img)
+{
+    to_grayscale(img);
+    /*int height = img->h;
+    int weight = img->w;
+    for (unsigned int i = 0; i < weight; ++i) {
+        for (unsigned int j = 0; j < height; ++j) {
+
+        }
+    }*/
+}
+/*
+
+void BlackAndWhiteRelative(SDL_Surface* img)
 {
 //seuil relatif à l'image
 }
 
 
-void Sharpen(Bitmap* img)
+void Sharpen(SDL_Surface* img)
 {
 //netteté
-}
+}*/

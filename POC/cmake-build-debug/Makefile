@@ -39,19 +39,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/marine/Documents/CLion/clion-2018.2.4/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /home/nora/Téléchargements/CLion-2018.2.4/clion-2018.2.4/bin/cmake/linux/bin/cmake
 
 # The command to remove a file.
-RM = /home/marine/Documents/CLion/clion-2018.2.4/bin/cmake/linux/bin/cmake -E remove -f
+RM = /home/nora/Téléchargements/CLion-2018.2.4/clion-2018.2.4/bin/cmake/linux/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/marine/OCR/OCR_Project/POC
+CMAKE_SOURCE_DIR = /home/nora/Documents/OCR/OCR_Project/POC
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/marine/OCR/OCR_Project/POC/cmake-build-debug
+CMAKE_BINARY_DIR = /home/nora/Documents/OCR/OCR_Project/POC/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/marine/OCR/OCR_Project/POC/cmake-build-debug
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/marine/Documents/CLion/clion-2018.2.4/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/home/nora/Téléchargements/CLion-2018.2.4/clion-2018.2.4/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/home/marine/Documents/CLion/clion-2018.2.4/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/home/nora/Téléchargements/CLion-2018.2.4/clion-2018.2.4/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marine/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles /home/marine/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nora/Documents/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles /home/nora/Documents/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/marine/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nora/Documents/OCR/OCR_Project/POC/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,17 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named POC
+# Target rules for targets named ReseauNeurone
 
 # Build rule for target.
-POC: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 POC
-.PHONY : POC
+ReseauNeurone: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ReseauNeurone
+.PHONY : ReseauNeurone
 
 # fast build rule for target.
-POC/fast:
-	$(MAKE) -f CMakeFiles/POC.dir/build.make CMakeFiles/POC.dir/build
-.PHONY : POC/fast
+ReseauNeurone/fast:
+	$(MAKE) -f CMakeFiles/ReseauNeurone.dir/build.make CMakeFiles/ReseauNeurone.dir/build
+.PHONY : ReseauNeurone/fast
+
+learning.o: learning.c.o
+
+.PHONY : learning.o
+
+# target to build an object file
+learning.c.o:
+	$(MAKE) -f CMakeFiles/ReseauNeurone.dir/build.make CMakeFiles/ReseauNeurone.dir/learning.c.o
+.PHONY : learning.c.o
+
+learning.i: learning.c.i
+
+.PHONY : learning.i
+
+# target to preprocess a source file
+learning.c.i:
+	$(MAKE) -f CMakeFiles/ReseauNeurone.dir/build.make CMakeFiles/ReseauNeurone.dir/learning.c.i
+.PHONY : learning.c.i
+
+learning.s: learning.c.s
+
+.PHONY : learning.s
+
+# target to generate assembly for a file
+learning.c.s:
+	$(MAKE) -f CMakeFiles/ReseauNeurone.dir/build.make CMakeFiles/ReseauNeurone.dir/learning.c.s
+.PHONY : learning.c.s
 
 main.o: main.c.o
 
@@ -129,7 +156,7 @@ main.o: main.c.o
 
 # target to build an object file
 main.c.o:
-	$(MAKE) -f CMakeFiles/POC.dir/build.make CMakeFiles/POC.dir/main.c.o
+	$(MAKE) -f CMakeFiles/ReseauNeurone.dir/build.make CMakeFiles/ReseauNeurone.dir/main.c.o
 .PHONY : main.c.o
 
 main.i: main.c.i
@@ -138,7 +165,7 @@ main.i: main.c.i
 
 # target to preprocess a source file
 main.c.i:
-	$(MAKE) -f CMakeFiles/POC.dir/build.make CMakeFiles/POC.dir/main.c.i
+	$(MAKE) -f CMakeFiles/ReseauNeurone.dir/build.make CMakeFiles/ReseauNeurone.dir/main.c.i
 .PHONY : main.c.i
 
 main.s: main.c.s
@@ -147,7 +174,7 @@ main.s: main.c.s
 
 # target to generate assembly for a file
 main.c.s:
-	$(MAKE) -f CMakeFiles/POC.dir/build.make CMakeFiles/POC.dir/main.c.s
+	$(MAKE) -f CMakeFiles/ReseauNeurone.dir/build.make CMakeFiles/ReseauNeurone.dir/main.c.s
 .PHONY : main.c.s
 
 # Help Target
@@ -158,7 +185,10 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... POC"
+	@echo "... ReseauNeurone"
+	@echo "... learning.o"
+	@echo "... learning.i"
+	@echo "... learning.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

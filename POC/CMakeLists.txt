@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.12)
-project(POC C)
+project(ReseauNeurone C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
 
-add_executable(POC main.c)
+include_directories(.)
+
+add_executable(ReseauNeurone
+        learning.c
+        learning.h
+        main.c)
