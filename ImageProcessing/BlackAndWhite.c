@@ -57,10 +57,10 @@ void BlackAndWhite(SDL_Surface* img)
     }
 }
 
-void SauvolaBinarization(SDL_Surface* img)
+/*void SauvolaBinarization(SDL_Surface* img)
 {
 
-}
+}*/
 /*
 
 void BlackAndWhiteRelative(SDL_Surface* img)

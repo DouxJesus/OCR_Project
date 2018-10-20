@@ -4,6 +4,7 @@
 #include "ImageProcessing/BlackAndWhite.h"
 #include "Image_BMP/pixel_operations.h"
 #include "Image_BMP/BMP.h"
+#include "RSLA.h"
 
 int main() {
     printf("Hello, OCR Project!\n");
@@ -37,7 +38,7 @@ int main() {
     wait_for_keypressed();
 
     /////////////////////////////////////////////////
-   image_surface = RSLA(image_surface);
+   image_surface = Process(image_surface, 5, 1);
 
     update_surface(screen_surface, image_surface);
 

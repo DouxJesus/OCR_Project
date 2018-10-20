@@ -8,7 +8,8 @@
 #include "SDL/SDL_image.h"
 
 SDL_Surface* RSLA(SDL_Surface *img){
-	SDL_Surface mask1, mask2, mask3, output;
+	SDL_Surface* mask1, mask2, mask3;
+	SDL_Surface *output;
 	//CALL PROCESS ON horizontal    ->Mask1
 	//CALL PROCESS ON VERTICAL 		->Mask2
 	//DO MERGE OF MASKS				->*Mask3 = *Mask1 && *Mask2
@@ -26,15 +27,15 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
 	int width, height;
 	width = img->w;
 	height= img->h;
-	output.h = height;
-	output.w = width;
+	output->h = height;
+	output->w = width;
 
 
 	//If the surface must be locked
-    if( SDL_MUSTLOCK( surface ) )
+    if( SDL_MUSTLOCK(img) )
     {
         //Lock the surface
-        SDL_LockSurface( surface );
+        SDL_LockSurface(img);
     }
 
 
@@ -45,7 +46,7 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
         {
         	int adjacent_pix = 0;
         	//Go through columns
-			for( int x = 0; x < output->w; x++ )
+			for( int x = 0; x < output->w; x++)
    			{
         		//Get pixel
             	Uint32 pixel = get_pixel(img, x, y);
@@ -56,12 +57,12 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
             		put_pixel(output, x, y, pixel);
             		if(adjacent_pix <= threshold){
             			while(adjacent_pix > 0){
-            				put_pixel(output, x - adjacent_pix, y, pixel)
+            				put_pixel(output, x - adjacent_pix, y, pixel);
             				adjacent_pix--;
             			}
             		}
             		else{
-            			adjacent_pix = 0
+            			adjacent_pix = 0;
             		}
             	}
             	else{
@@ -85,12 +86,12 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
             		put_pixel(output, x, y, pixel);
             		if(adjacent_pix <= threshold){
             			while(adjacent_pix > 0){
-            				put_pixel(output, x, y - adjacent_pix, pixel)
+            				put_pixel(output, x, y - adjacent_pix, pixel);
             				adjacent_pix--;
             			}
             		}
             		else{
-            			adjacent_pix = 0
+            			adjacent_pix = 0;
             		}
             	}
             	else{
@@ -102,9 +103,9 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
 	}
 
 	//Unlock surface
-    if( SDL_MUSTLOCK( surface ) )
+    if( SDL_MUSTLOCK(img) )
     {
-        SDL_UnlockSurface( surface );
+        SDL_UnlockSurface(img);
     }
 
 	return output;
@@ -113,10 +114,11 @@ SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal){
 
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 	if( img->flags & SDL_SRCCOLORKEY ) { 
-		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, surfaceimg>format->Gmask, img->format->Bmask, 0 ); } 
+		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, 0 ); }
 	else { 
 		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask ); 
 	}
+	return mask;
 }
 
  
