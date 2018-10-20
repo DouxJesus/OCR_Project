@@ -3,7 +3,7 @@
 //
 
 #include "RSLA.h"
-#include <PixelProcessing.h>
+#include "../Image_BMP/pixel_operations.h"
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 
