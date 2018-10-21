@@ -38,18 +38,29 @@ void to_grayscale(SDL_Surface *img)
     }
 }
 
+void gammaCorrection(SDL_Surface *img)
+{
+    //the gamma
+    SDL_MapRGB(img->format, 4,4,4);
+}
+
 
 void BlackAndWhite(SDL_Surface* img)
 {
-    to_grayscale(img);
-    /*int height = img->h;
-    int weight = img->w;
+    unsigned int height = img->h;
+    unsigned int weight = img->w;
     for (unsigned int i = 0; i < weight; ++i) {
         for (unsigned int j = 0; j < height; ++j) {
 
+            put_pixel(img, i, j, ToBlackOrWhite(img, i, j, 255/2));
         }
-    }*/
+    }
 }
+
+/*void SauvolaBinarization(SDL_Surface* img)
+{
+
+}*/
 /*
 
 void BlackAndWhiteRelative(SDL_Surface* img)

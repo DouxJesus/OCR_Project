@@ -4,6 +4,7 @@
 #include "ImageProcessing/BlackAndWhite.h"
 #include "Image_BMP/pixel_operations.h"
 #include "Image_BMP/BMP.h"
+#include "RSLA.h"
 
 int main() {
     printf("Hello, OCR Project!\n");
@@ -13,17 +14,39 @@ int main() {
 
     init_sdl();
 
-    image_surface = load_image("../Images_test/RTEmagicC_texte-ponctuation_02.bmp");
+    image_surface = load_image("Images_test/RTEmagicC_texte-ponctuation_02.bmp");
     screen_surface = display_image(image_surface);
 
     wait_for_keypressed();
-
+    /////////////////////////////////////////////////
     to_grayscale(image_surface);
 
     update_surface(screen_surface, image_surface);
 
     wait_for_keypressed();
+    /////////////////////////////////////////////////
+    gammaCorrection(image_surface);
 
+    update_surface(screen_surface, image_surface);
+
+    wait_for_keypressed();
+    /////////////////////////////////////////////////
+    BlackAndWhite(image_surface);
+
+    update_surface(screen_surface, image_surface);
+
+    wait_for_keypressed();
+
+    /////////////////////////////////////////////////
+    image_surface = Process(image_surface, 10, 1);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    /////////////////////////////////////////////////
+    image_surface = Process(image_surface, 20, 0);
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+    /////////////////////////////////////////////////
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
     return 0;
