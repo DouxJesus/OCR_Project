@@ -9,3 +9,5 @@ add_executable(ReseauNeurone
         learning.c
         learning.h
         main.c)
+
+target_link_libraries(ReseauNeurone m)

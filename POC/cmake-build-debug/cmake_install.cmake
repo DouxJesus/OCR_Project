@@ -1,4 +1,4 @@
-# Install script for directory: /home/nora/Documents/OCR/OCR_Project/POC
+# Install script for directory: /home/nora/CLionProjects/ReseauNeurone
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/nora/Documents/OCR/OCR_Project/POC/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/nora/CLionProjects/ReseauNeurone/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

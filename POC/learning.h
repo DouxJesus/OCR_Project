@@ -27,11 +27,11 @@ typedef struct
     float j;
     float j_z;
 
-    float target;
 }Neurone;
 
-void initialize(Neurone n);
-void propagation(Neurone n);
-void retro(Neurone n);
+Neurone initialize();
+Neurone propagation(Neurone n, float x, float y);
+Neurone retro(Neurone n, float target);
+Neurone train(Neurone n);
 
 #endif //RESEAUNEURONE_LEARNING_H
