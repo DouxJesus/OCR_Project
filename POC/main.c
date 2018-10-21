@@ -4,10 +4,9 @@
 
 int main() {
     Neurone xor = initialize();
-    for (int i = 0; i < 42000; i++)
+    for (int i = 0; i < 1000000; i++)
     {
         xor = train(xor);
-
     }
     xor = propagation(xor, 0, 0);
     printf("%f + %f = %f\n", xor.x, xor.y, xor.z);

@@ -30,6 +30,7 @@ typedef struct
 }Neurone;
 
 Neurone initialize();
+float sigmoid(float x);
 Neurone propagation(Neurone n, float x, float y);
 Neurone retro(Neurone n, float target);
 Neurone train(Neurone n);
