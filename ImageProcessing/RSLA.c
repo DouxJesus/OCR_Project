@@ -62,7 +62,7 @@ reSDL_Surface Process(SDL_Surface *img, SDL_Surface output, int threshold ,int h
             		}
             	}
             	else{
-					put_pixel(output, x, y, 255);
+					put_pixel(output, x, y, SDL_MapRGB(img->format, 255, 255, 255));
             		adjacent_pix++;
             	}
    			}	
@@ -92,7 +92,7 @@ reSDL_Surface Process(SDL_Surface *img, SDL_Surface output, int threshold ,int h
             		}
             	}
             	else{
-					put_pixel(output, x, y, 255);
+					put_pixel(output, x, y, SDL_MapRGB(img->format, 255, 255, 255));
 
             		adjacent_pix++;
             	}
