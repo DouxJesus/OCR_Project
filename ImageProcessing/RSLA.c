@@ -118,10 +118,10 @@ SDL_Surface* Merge(SDL_Surface* mask1, SDL_Surface* mask2, SDL_Surface* output){
 			//Get pixel
            	Uint32 pixel_h = get_pixel(mask1, x, y);
            	Uint8 rh, gh, bh;
-			SDL_GetRGB(pixel, mask1->format, &rh, &gh, &bh);
+			SDL_GetRGB(pixel_h, mask1->format, &rh, &gh, &bh);
 			Uint32 pixel_v = get_pixel(mask2, x, y);
            	Uint8 rv, gv, bv;
-			SDL_GetRGB(pixel, mask1->format, &rv, &gv, &bv);
+			SDL_GetRGB(pixel_v, mask2->format, &rv, &gv, &bv);
 			if(rh < 127 && gh < 127 && bh < 127 && rv < 127 && gv < 127 && bv < 127){
 				//on both mask, pixel is black
 				put_pixel(output, x, y, pixel_v);
@@ -133,10 +133,61 @@ SDL_Surface* Merge(SDL_Surface* mask1, SDL_Surface* mask2, SDL_Surface* output){
 
 /*SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
 
+	for( int y = 0; y < output->h; y++)
+    {
+		for( int x = 0; x < output->w; x++)
+		{
+			//Get pixel
+           	Uint32 pixel_h = get_pixel(mask3, x, y);
+           	Uint8 r, g, b;
+			SDL_GetRGB(pixel, mask3->format, &r, &g, &b);
+			if(r < 127 && g < 127 && b < 127){
+				//Pixel is black
+				//Check for rectangle
+
+
+			}
+		}
+	}
+
+}
+
+SDL_Rect CheckRectangle(SDL_Surface *img, x, y){
+	SDL_Rect output;
+	output->x = x;
+	output->y = y;
+	int j = y;
+	int goOn = 1;
+	while(goOn == 1 && j < img->h){
+		//Get pixel
+        Uint32 pixel = get_pixel(img, x, j);
+	   	Uint8 r, g, b;
+		SDL_GetRGB(pixel, img->format, &r, &g, &b);
+		if(r > 127 && g > 127 && b > 127){
+			//pixel is white
+			goOn = 0
+		}
+		j++;
+	}
+	output->h = j
+	int i = x;
+	goOn = 1;
+	while(goOn == 1 && i < img->w){
+		//Get pixel
+        Uint32 pixel = get_pixel(img, i, y);
+	   	Uint8 r, g, b;
+		SDL_GetRGB(pixel, img->format, &r, &g, &b);
+		if(r > 127 && g > 127 && b > 127){
+			//pixel is white
+			goOn = 0
+		}
+		j++;
+	}
+
 }
 
 SDL_Surface Copy(SDL_Surface *img, SDL_Rect area){
-	
+
 }
 
 SDL_Surface* RSLA(SDL_Surface *img){
