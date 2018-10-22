@@ -4,7 +4,7 @@
 #include "ImageProcessing/BlackAndWhite.h"
 #include "Image_BMP/pixel_operations.h"
 #include "Image_BMP/BMP.h"
-#include "RSLA.h"
+#include "ImageProcessing/RSLA.h"
 
 int main() {
     printf("Hello, OCR Project!\n");
@@ -36,29 +36,32 @@ int main() {
 
     /////////////////////////////////////////////////
     printf("RSLA : horizontal\n");
-    SDL_Surface* image_mask1;
-    image_mask1 = Process(image_surface, 10, 1);
+    SDL_Surface* image_mask1 = NULL;
+    image_mask1 = Process(image_surface, image_mask1, 10, 1);
     update_surface(screen_surface, image_mask1);
     wait_for_keypressed();
 
     /////////////////////////////////////////////////
     printf("RSLA : vertical\n");
-    SDL_Surface* image_mask2;
-    image_mask2 = Process(image_surface, 15, 0);
+    SDL_Surface* image_mask2 = NULL;
+    image_mask2 = Process(image_surface, image_mask2, 15, 0);
     update_surface(screen_surface, image_mask2);
     wait_for_keypressed();
 
 
     /////////////////////////////////////////////////
-    printf("RSLA : merge\n");
-    SDL_Surface* image_mask3;
-    image_mask3 = NULL;
+    SDL_Surface* image_mask3 = NULL;
     image_mask3 = Merge(image_mask1, image_mask2, image_mask3);
     update_surface(screen_surface, image_mask3);
+    printf("RSLA : merge\n");
     wait_for_keypressed();
 
     /////////////////////////////////////////////////
     printf("End\n");
+    SDL_FreeSurface(image_mask1);
+    SDL_FreeSurface(image_mask2);
+    SDL_FreeSurface(image_mask3);
+
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
     return 0;
