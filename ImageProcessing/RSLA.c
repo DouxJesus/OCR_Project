@@ -131,6 +131,14 @@ SDL_Surface Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 	return output;
 }
 
+SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
+
+}
+
+SDL_Surface Copy(SDL_Surface *img, SDL_Rect area){
+	
+}
+
 SDL_Surface* RSLA(SDL_Surface *img){
 	SDL_Surface* mask1, mask2, mask3;
 	SDL_Surface *output;
@@ -138,7 +146,6 @@ SDL_Surface* RSLA(SDL_Surface *img){
 	mask2 = Process(img, mask2, 3, 0);
 	mask3 = Merge(mask1, mask2, mask3);
 	//DO EXTRACT 					->*output = Extract(*img, *mask3 );
-	//FREE MASKS
 	SDL_FreeSurface(mask1);
 	SDL_FreeSurface(mask2);
 	SDL_FreeSurface(mask3);
