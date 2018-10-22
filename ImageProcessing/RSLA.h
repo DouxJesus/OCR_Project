@@ -9,5 +9,5 @@
 SDL_Surface* RSLA(SDL_Surface *img);
 SDL_Surface* Process(SDL_Surface *img, int threshold ,int horizontal);
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask);
-
+SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output);
 #endif //OCR_RSLA_H

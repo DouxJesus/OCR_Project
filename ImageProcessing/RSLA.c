@@ -109,8 +109,8 @@ reSDL_Surface Process(SDL_Surface *img, SDL_Surface output, int threshold ,int h
     return output;
 }
 
-SDL_Surface Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
-	output = InitSurfaceFromAnother(mask1, output);
+SDL_Surface* Merge(SDL_Surface* mask1, SDL_Surface* mask2, SDL_Surface* output){
+	output = InitSurfaceFromAnother(output, mask1);
 	for( int y = 0; y < output->h; y++)
      {
 		for( int x = 0; x < output->w; x++)
@@ -124,14 +124,14 @@ SDL_Surface Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 			SDL_GetRGB(pixel, mask1->format, &rv, &gv, &bv);
 			if(rh < 127 && gh < 127 && bh < 127 && rv < 127 && gv < 127 && bv < 127){
 				//on both mask, pixel is black
-				put_pixel(output, x, y, pixel_v)
+				put_pixel(output, x, y, pixel_v);
        		}
 		}
 	}
 	return output;
 }
 
-SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
+/*SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
 
 }
 
@@ -152,7 +152,7 @@ SDL_Surface* RSLA(SDL_Surface *img){
 	return output;
 }
 
-
+*/
 
 
  
