@@ -118,13 +118,13 @@ SDL_Surface Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 			//Get pixel
            	Uint32 pixel_h = get_pixel(mask1, x, y);
            	Uint8 rh, gh, bh;
-			SDL_GetRGB(pixel, mask1->format, &rh, &gh, &bh);
+			SDL_GetRGB(pixel_h, mask1->format, &rh, &gh, &bh);
 			Uint32 pixel_v = get_pixel(mask2, x, y);
            	Uint8 rv, gv, bv;
-			SDL_GetRGB(pixel, mask2->format, &rv, &gv, &bv);
+			SDL_GetRGB(pixel_v, mask2->format, &rv, &gv, &bv);
 			if(rh < 127 && gh < 127 && bh < 127 && rv < 127 && gv < 127 && bv < 127){
 				//on both mask, pixel is black
-				put_pixel(output, x, y, pixel_v)
+				put_pixel(output, x, y, pixel_v);
        		}
 		}
 	}
