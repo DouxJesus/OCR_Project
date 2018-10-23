@@ -9,6 +9,7 @@
 
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 	if( img->flags & SDL_SRCCOLORKEY ) { 
+		//								flags		width	height,  depth						Red  				Green				Blue				Alpha
 		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, 0 ); }
 	else { 
 		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask ); 
@@ -132,7 +133,7 @@ SDL_Surface Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 }
 
 SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
-
+	//SDL_Rect** Rectangles;
 	for( int y = 0; y < output->h; y++)
     {
 		for( int x = 0; x < output->w; x++)
@@ -144,11 +145,11 @@ SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
 			if(r < 127 && g < 127 && b < 127){
 				//Pixel is black
 				//Check for rectangle
-
-
+				SDL_Rect rect = CheckRectangle(img, x, y);
 			}
 		}
 	}
+	return img;
 
 }
 
@@ -179,14 +180,13 @@ SDL_Rect CheckRectangle(SDL_Surface *img, x, y){
 		SDL_GetRGB(pixel, img->format, &r, &g, &b);
 		if(r > 127 && g > 127 && b > 127){
 			//pixel is white
-			goOn = 0
+			goOn = 0;
 		}
-		j++;
+		i++;
 	}
+	output->w = i;
 
-}
-
-SDL_Surface Copy(SDL_Surface *img, SDL_Rect area){
+	return output;
 
 }
 
