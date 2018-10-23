@@ -7,12 +7,17 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 
+<<<<<<< HEAD
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 	if( img->flags & SDL_SRCCOLORKEY ) { 
 		//								flags		width	height,  depth						Red  				Green				Blue				Alpha
+=======
+SDL_Surface* InitSurfaceFromAnother(SDL_Surface* img, SDL_Surface* mask){
+	if( img->flags & SDL_SRCCOLORKEY ) {
+>>>>>>> eec2e245d1cca4a87a1886f2e60e795c296514d9
 		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, 0 ); }
 	else { 
-		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask ); 
+		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 	}
 	return mask;
 }
@@ -22,7 +27,7 @@ SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 //img is a pointer to SDL_Surface to process
 //threshold -> int -> the threshold value used in the RSLA algorithm 
 //horizontal -> bool -> define if do horizontal pass (true) or vertical pass(false)
-reSDL_Surface Process(SDL_Surface *img, SDL_Surface output, int threshold ,int horizontal){
+SDL_Surface* Process(SDL_Surface *img, SDL_Surface* output, int threshold ,int horizontal){
 	output = NULL;
 	output = InitSurfaceFromAnother(img, output); //Init output with img's dimension
 	int width, height;
@@ -103,18 +108,33 @@ reSDL_Surface Process(SDL_Surface *img, SDL_Surface output, int threshold ,int h
 	}
 
 	//Unlock surface
-    if( SDL_MUSTLOCK(img) )
+    if(SDL_MUSTLOCK(img))
     {
         SDL_UnlockSurface(img);
     }
     return output;
 }
 
-SDL_Surface Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
+SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
+	if( SDL_MUSTLOCK(mask1) )
+	{
+		//Lock the surface
+		SDL_LockSurface(mask1);
+	}
+	if( SDL_MUSTLOCK(mask2) )
+	{
+		//Lock the surface
+		SDL_LockSurface(mask2);
+	}
 	output = InitSurfaceFromAnother(mask1, output);
-	for( int y = 0; y < output->h; y++)
+	if( SDL_MUSTLOCK(output) )
+	{
+		//Lock the surface
+		SDL_LockSurface(output);
+	}
+	for( int y = 0; y < mask1->h; y++)
      {
-		for( int x = 0; x < output->w; x++)
+		for( int x = 0; x < mask1->w; x++)
 		{
 			//Get pixel
            	Uint32 pixel_h = get_pixel(mask1, x, y);
@@ -129,11 +149,29 @@ SDL_Surface Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
        		}
 		}
 	}
+	if(SDL_MUSTLOCK(mask1))
+	{
+		SDL_UnlockSurface(mask1);
+	}
+	if(SDL_MUSTLOCK(mask2))
+	{
+		SDL_UnlockSurface(mask2);
+	}
+	if( SDL_MUSTLOCK(output) )
+	{
+		//Lock the surface
+		SDL_UnlockSurface(output);
+	}
 	return output;
 }
 
+<<<<<<< HEAD
 SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
 	//SDL_Rect** Rectangles;
+=======
+/*SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
+
+>>>>>>> eec2e245d1cca4a87a1886f2e60e795c296514d9
 	for( int y = 0; y < output->h; y++)
     {
 		for( int x = 0; x < output->w; x++)
@@ -203,7 +241,7 @@ SDL_Surface* RSLA(SDL_Surface *img){
 	return output;
 }
 
-
+*/
 
 
  
