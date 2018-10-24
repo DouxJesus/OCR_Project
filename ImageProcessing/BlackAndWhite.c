@@ -6,6 +6,8 @@
 #include "../Image_BMP/pixel_operations.h"
 #include "../Image_BMP/BMP.h"
 
+Uint32 mini = 0, maxi = 255;
+
 Uint32 ToBlackOrWhite(SDL_Surface* img, unsigned int i, unsigned int j, int seuil)
 {
     Uint32 pixel = get_pixel(img, i, j);
@@ -26,12 +28,23 @@ void to_grayscale(SDL_Surface *img)
 {
     unsigned int width = (unsigned int) img->w;
     unsigned int height = (unsigned int) img->h;
-    for (int unsigned i = 0; i < width; i++) {
+    maxi = 0;
+    mini = 255;
+    for (unsigned int i = 0; i < width; i++) {
         for (unsigned int j = 0; j < height; j++) {
             Uint32 pixel = get_pixel(img, i, j);
             Uint8 r, g, b;
             SDL_GetRGB(pixel, img->format, &r, &g, &b);
-            Uint8 average = (Uint8) (0.3*r + 0.59*g + 0.11*b);
+            Uint32 average = (Uint32) (0.3*r + 0.59*g + 0.11*b);
+            if (average < mini)
+            {
+                mini = average;
+            }
+            if (average > maxi)
+            {
+
+                maxi = average;
+            }
             pixel = SDL_MapRGB(img->format, average, average, average);
             put_pixel(img, i, j, pixel);
         }
@@ -42,10 +55,11 @@ void BlackAndWhite(SDL_Surface* img)
 {
     unsigned int height = img->h;
     unsigned int weight = img->w;
+    int seuil = mini + (maxi - mini) / 2;
     for (unsigned int i = 0; i < weight; ++i) {
         for (unsigned int j = 0; j < height; ++j) {
 
-            put_pixel(img, i, j, ToBlackOrWhite(img, i, j, 150));
+            put_pixel(img, i, j, ToBlackOrWhite(img, i, j, seuil));
         }
     }
 }

@@ -7,14 +7,9 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 
-<<<<<<< HEAD
+
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
-	if( img->flags & SDL_SRCCOLORKEY ) { 
-		//								flags		width	height,  depth						Red  				Green				Blue				Alpha
-=======
-SDL_Surface* InitSurfaceFromAnother(SDL_Surface* img, SDL_Surface* mask){
 	if( img->flags & SDL_SRCCOLORKEY ) {
->>>>>>> eec2e245d1cca4a87a1886f2e60e795c296514d9
 		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, 0 ); }
 	else { 
 		mask = SDL_CreateRGBSurface( SDL_SWSURFACE, img->w, img->h, img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
@@ -169,13 +164,9 @@ SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 	return output;
 }
 
-<<<<<<< HEAD
-SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
-	//SDL_Rect** Rectangles;
-=======
-/*SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
 
->>>>>>> eec2e245d1cca4a87a1886f2e60e795c296514d9
+	//SDL_Rect** Rectangles;
+/*SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
 	for( int y = 0; y < output->h; y++)
     {
 		for( int x = 0; x < output->w; x++)
