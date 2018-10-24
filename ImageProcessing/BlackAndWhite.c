@@ -50,6 +50,56 @@ void BlackAndWhite(SDL_Surface* img)
     }
 }
 
+int abs(int a)
+{
+    if (a < 0)
+        return -a;
+    return a;
+}
+
+void Contrast(SDL_Surface* img)
+{
+    unsigned int width = (unsigned int) img->w;
+    unsigned int height = (unsigned int) img->h;
+    for (int unsigned i = 0; i < width; i++) {
+        for (unsigned int j = 0; j < height; j++) {
+
+            Uint32 pixel = get_pixel(img, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, img->format, &r, &g, &b);
+
+            unsigned int k = i - 2, l = j - 2;
+            int average_around = 0, nb = 1;
+            Uint32 r_a = 0, g_a = 0, b_a = 0;
+            while (k < width && k <= i + 2)
+            {
+                if (k > 0) {
+                    unsigned int tmp = l;
+                    while (l < height && l <= j + 2) {
+                        if(l > 0) {
+                            Uint32 p = get_pixel(img, k, l);
+                            Uint8 r1, g1, b1;
+                            SDL_GetRGB(p, img->format, &r1, &g1, &b1);
+                           r_a += r1;
+                           b_a += b1;
+                           g_a += g1;
+                            nb++;
+                        }
+                        l++;
+                    }
+                    l = tmp;
+                }
+                k++;
+            }
+            if (nb != 0) {
+                int moy = SDL_MapRGB(img->format, r_a / nb, g_a / nb, b_a / nb);
+                int new_pix = abs(pixel - moy) / abs(pixel + moy);
+                put_pixel(img, i, j, new_pix);
+            }
+        }
+    }
+}
+
 /*void SauvolaBinarization(SDL_Surface* img)
 {
 

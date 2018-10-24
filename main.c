@@ -6,15 +6,18 @@
 #include "Image_BMP/BMP.h"
 #include "ImageProcessing/RSLA.h"
 
-int main() {
+int main(int argc, char** argv) {
     printf("Hello, OCR Project!\n");
 
+    char* param = argv[1];
+
+    printf("param = %s \n", argv[1]);
     SDL_Surface* image_surface;
     SDL_Surface* screen_surface;
 
     init_sdl();
 
-    image_surface = load_image("Images_test/rafale.bmp");
+    image_surface = load_image(param);
     screen_surface = display_image(image_surface);
 
     wait_for_keypressed();
@@ -26,6 +29,15 @@ int main() {
 
     wait_for_keypressed();
     /////////////////////////////////////////////////
+
+   // printf("Contrast\n");
+    //Contrast(image_surface);
+
+   // update_surface(screen_surface, image_surface);
+
+    //wait_for_keypressed();
+    /////////////////////////////////////////////////
+
     printf("B&W\n");
     BlackAndWhite(image_surface);
 
@@ -37,16 +49,30 @@ int main() {
     /////////////////////////////////////////////////
     printf("RSLA : horizontal\n");
     SDL_Surface* image_mask1 = NULL;
-    image_mask1 = Process(image_surface, image_mask1, 10, 1);
+    image_mask1 = Process(image_surface, image_mask1, 30, 1);
     update_surface(screen_surface, image_mask1);
     wait_for_keypressed();
+
+ /*   /////////////////////////////////////////////////
+    printf("RSLA : horizontal-v\n");
+    image_mask1 = Process(image_surface, image_mask1, 50, 0);
+    update_surface(screen_surface, image_mask1);
+    wait_for_keypressed();
+
+*/
 
     /////////////////////////////////////////////////
     printf("RSLA : vertical\n");
     SDL_Surface* image_mask2 = NULL;
-    image_mask2 = Process(image_surface, image_mask2, 15, 0);
+    image_mask2 = Process(image_surface, image_mask2, 50, 0);
     update_surface(screen_surface, image_mask2);
     wait_for_keypressed();
+
+ /*   /////////////////////////////////////////////////
+    printf("RSLA : vertical-h\n");
+    image_mask2 = Process(image_surface, image_mask2, 30, 1);
+    update_surface(screen_surface, image_mask2);
+    wait_for_keypressed();*/
 
 
     /////////////////////////////////////////////////
@@ -55,6 +81,28 @@ int main() {
     update_surface(screen_surface, image_mask3);
     printf("RSLA : merge\n");
     wait_for_keypressed();
+
+
+  /*  /////////////////////////////////////////////////
+    printf("RSLA : horizontal 2\n");
+    SDL_Surface* image_mask31 = NULL;
+    image_mask31 = Process(image_mask3, image_mask31, 30, 1);
+    update_surface(screen_surface, image_mask31);
+    wait_for_keypressed();
+
+    /////////////////////////////////////////////////
+    printf("RSLA : vertical 2\n");
+    SDL_Surface* image_mask32 = NULL;
+    image_mask32 = Process(image_mask3, image_mask32, 50, 0);
+    update_surface(screen_surface, image_mask32);
+    wait_for_keypressed();
+
+    /////////////////////////////////////////////////
+    SDL_Surface* image_mask33 = NULL;
+    image_mask33 = Merge(image_mask31, image_mask32, image_mask33);
+    update_surface(screen_surface, image_mask33);
+    printf("RSLA : merge\n");
+    wait_for_keypressed();*/
 
     /////////////////////////////////////////////////
     printf("End\n");

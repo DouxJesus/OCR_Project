@@ -143,10 +143,14 @@ SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 			Uint32 pixel_v = get_pixel(mask2, x, y);
            	Uint8 rv, gv, bv;
 			SDL_GetRGB(pixel_v, mask2->format, &rv, &gv, &bv);
-			if(rh < 127 && gh < 127 && bh < 127 && rv < 127 && gv < 127 && bv < 127){
-				//on both mask, pixel is black
-				put_pixel(output, x, y, pixel_v);
+			if(rh < 127){
+					//on both mask, pixel is black
+					put_pixel(output, x, y, pixel_v);
        		}
+       		else
+			{
+       			put_pixel(output, x, y, pixel_h);
+			}
 		}
 	}
 	if(SDL_MUSTLOCK(mask1))

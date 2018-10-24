@@ -1,2 +1,6 @@
 # OCR_Project
-c dur :(
+Open a terminal in /OCR_Project:
+
+$make
+$./main [path of your image]
+
