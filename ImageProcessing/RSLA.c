@@ -165,6 +165,145 @@ SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 }
 
 
+Rect* Create_Rect_List(SDL_Surface* mask)
+{
+    //int lenght = 1;
+    Rect* array;
+    if(!(array = malloc(sizeof(Rect))))
+    {
+        exit(-1);
+    }
+    Rect first_mask;
+    first_mask.x = 0;
+    first_mask.y = 0;
+    first_mask.width = mask->w;
+    first_mask.height = mask->h;
+    array[0]= first_mask;
+    return array;
+}
+
+Rect* Get_Rect(SDL_Surface* mask, Rect* array, int lenght, int IsHorizontalPass) {
+
+    int do_it_again = 0;
+
+    int len = lenght;
+    int width = mask->w;
+    int height = mask->h;
+
+    for (int k = 0; k < lenght; ++k) {
+
+        Rect rec_mask = array[k];
+        int rect_x = rec_mask.x, rect_y = rec_mask.y;
+        int relativ_rect_width = rec_mask.width, relativ_rect_height = rec_mask.height;
+        int rect_width = rec_mask.width + rec_mask.x, rect_height = rec_mask.height + rec_mask.y;
+
+
+        //0 (faux) ou 1 (vrai)
+        int IsWhiteLine = 1; //true
+        int WasWhiteLine = 0; //false
+
+        int frst_x = 0, frst_y = 0;
+
+        if (!IsHorizontalPass) {
+            for (int i = rect_x; i < rect_width; i++) {
+
+                int j = rect_y;
+                while (IsWhiteLine == 1 && j < rect_height) {
+
+                    Uint32 pixel = get_pixel(mask, i, j);
+                    Uint8 r, g, b;
+                    SDL_GetRGB(pixel, mask->format, &r, &g, &b);
+
+                    if (b < 127) { //le pixel est noir
+                        IsWhiteLine = 0; //false
+                    }
+
+                    if (IsWhiteLine) {
+
+                        if (!WasWhiteLine) { //la ligne précédente n'est pas blanche, on peut faire un bloc
+                            printf("first white line : new bloc \n");
+                            len++;
+                            if (NULL == (array = realloc(array, (len) * sizeof(Rect)))) {
+                                printf("Realloc == NULL \n");
+                                exit(-1);
+                            }
+
+                            Rect new_Rect;
+                            new_Rect.x = frst_x;
+                            new_Rect.y = frst_y;
+                            new_Rect.width = i - rect_x;
+                            new_Rect.height = j - rect_y;
+                            array[len-1] = new_Rect;
+
+                            Draw_Rect(mask,new_Rect);
+
+                            do_it_again++; //on a une ligne blanche donc on devra refaire forcément un tour sur tt les
+                        }
+                        WasWhiteLine = 1; //true
+                    } else
+                    {
+                        if(WasWhiteLine){//la ligne n'est pas blanche et celle d'avant l'était donc c'est un nouveau bloc
+                            printf("last white line \n");
+                            frst_x = i - 1;
+                            frst_y = j - 1;
+                        }
+                        WasWhiteLine = 0; //false
+                    }
+
+                    j++;
+                }
+            }
+
+            if (!WasWhiteLine) { //la ligne précédente n'est pas blanche, on peut faire un bloc
+                printf("end of while, before wasn't a white line : new bloc \n");
+                len++;
+                if (!(array = realloc(array, (len) * sizeof(Rect)))) {
+                    exit(-1);
+                }
+
+                Rect new_Rect;
+                new_Rect.x = frst_x;
+                new_Rect.y = frst_y;
+                new_Rect.width = rect_width - frst_x;
+                new_Rect.height = rect_height - frst_y;
+
+                array[len-1] = new_Rect;
+                do_it_again++; //on a une ligne blanche donc on devra refaire forcément un tour sur tt les
+            }
+        }
+
+    }
+
+    /*if(do_it_again)
+    {
+        Get_Rect(mask, array, len, 0); // !IsHorizontalPass
+    }*/
+
+    return array;
+}
+
+void Draw_Rect(SDL_Surface* mask, Rect rect)
+{
+
+    printf("Draw  \n");
+    Uint32 blue = SDL_MapRGB(mask->format, 0, 0, 255);
+    int x = rect.x, y = rect.y;
+    int width = rect.width, height = rect.height;
+
+    for (int i = 0; i < width; ++i) {
+        put_pixel(mask, x + i, y, blue);
+        put_pixel(mask, x + i, y - 1, blue);
+        put_pixel(mask, x + i, y + height - 1, blue);
+        put_pixel(mask, x + i, y + height , blue);
+    }
+    for (int j = 0; j < height; ++j) {
+        put_pixel(mask, x, y + j, blue);
+        put_pixel(mask, x - 1, y + j, blue);
+        put_pixel(mask, x + width - 1, y + j, blue);
+        put_pixel(mask, x + width, y + j, blue);
+    }
+}
+
 	//SDL_Rect** Rectangles;
 /*SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
 	for( int y = 0; y < output->h; y++)

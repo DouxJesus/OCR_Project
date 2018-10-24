@@ -79,14 +79,30 @@ int main(int argc, char** argv) {
     update_surface(screen_surface, image_mask31);
     wait_for_keypressed();
 
-        /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+    printf("RSLA :  CreateRect \n");
+    Rect* list = Create_Rect_List(image_mask31);
+    printf("RSLA :  GetRect \n");
+    list = Get_Rect(image_mask31, list, 1, 0);
+    update_surface(screen_surface, image_mask31);
+    wait_for_keypressed();
+
+    //Draw_Rect(image_mask31, list[0]);
+    //Draw_Rect(image_mask31, list[1]);
+    //Draw_Rect(image_mask31, list[2]);
+
+    update_surface(screen_surface, image_mask31);
+
+    wait_for_keypressed();
+
+    /*       /////////////////////////////////////////////////
      printf("RSLA : vertical 2\n");
      SDL_Surface* image_mask32 = NULL;
      image_mask32 = Process(image_mask3, image_mask32, 5, 0);
      update_surface(screen_surface, image_mask32);
      wait_for_keypressed();
 
-   /*  /////////////////////////////////////////////////
+  /////////////////////////////////////////////////
      SDL_Surface* image_mask33 = NULL;
      image_mask33 = Merge(image_mask31, image_mask32, image_mask33);
      update_surface(screen_surface, image_mask33);
