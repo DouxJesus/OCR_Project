@@ -206,8 +206,8 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHo
 
     int len = list.lenght;
     int init_lenght = len;
-    int width = mask->w;
-    int height = mask->h;
+    //int width = mask->w;
+    //int height = mask->h;
 
     for (int k = begin; k < init_lenght; ++k) { //go through the list of rect
 

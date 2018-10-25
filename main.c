@@ -8,7 +8,8 @@
 
 int main(int argc, char** argv) {
     printf("Hello, OCR Project!\n");
-
+	if (argc > 2)
+	printf("you put a lot of parameters !");
     char* param = argv[1];
 
     printf("param = %s \n", argv[1]);
