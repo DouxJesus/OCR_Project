@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
     Rect_List list_rect = Create_Rect_List(image_mask31);
     printf("RSLA :  GetRect \n");
 
-    Rect_Mask_Couple result = Get_Rect(image_mask31, list_rect, 0, 0, 4);
+    Rect_Mask_Couple result = Get_Rect(image_mask31, list_rect, 0, 0, 5);
     update_surface(screen_surface, result.mask);
     wait_for_keypressed();
     update_surface(screen_surface, image_surface);

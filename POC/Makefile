@@ -1,5 +1,4 @@
 # Simple SDL mini Makefile
-#ImageProcessing/RLSA.c
 #-Wall -Wextra -Werror
 
 CC=gcc

@@ -191,7 +191,8 @@ Rect_List Create_Rect_List(SDL_Surface* mask)
 //Get_Rect
 //took a mask, a list of rectangles, the point from when we begin the loop and a bool : is it an horizontal pass or not
 //return the list of blocs from the mask + mask
-Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHorizontalPass, int iteration) {
+Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin,
+        int IsHorizontalPass, int iteration) {
 
     if (iteration == 0)
     {
@@ -206,25 +207,24 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHo
 
     int len = list.lenght;
     int init_lenght = len;
-    //int width = mask->w;
-    //int height = mask->h;
 
     for (int k = begin; k < init_lenght; ++k) { //go through the list of rect
 
         Rect rec_mask = array[k];
 
-        int rect_x = rec_mask.x, rect_y = rec_mask.y;
-        int relativ_rect_width = rec_mask.width, relativ_rect_height = rec_mask.height;
-        int rect_width = relativ_rect_width + rec_mask.x, rect_height = relativ_rect_height + rec_mask.y;
+        int rect_x = rec_mask.x, rect_y = rec_mask.y; //coordinate of point up-left of the rectangle
+        int relativ_rect_width = rec_mask.width;
+        int relativ_rect_height = rec_mask.height; // relativ lenght of the rectangle
+        int rect_width = relativ_rect_width + rec_mask.x;
+        int rect_height = relativ_rect_height + rec_mask.y; //where the rectangle actually ends
 
         int WasWhiteLine = 0; //false
 
         int frst_x = rect_x, frst_y = rect_y;
 
         /*///////////////////////////////////////////////////////////////////////////////////////////////*/
-        if (!IsHorizontalPass) { //Vetical Pass
+        if (!IsHorizontalPass) { //Vertical Pass
             for (int i = rect_x; i < rect_width; i++) {
-
                 int IsWhiteLine = 1; //true
                 int j = rect_y;
                 while (IsWhiteLine == 1 && j < rect_height) {
@@ -238,35 +238,17 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHo
                     }
                     j++;
                 }
-
                 if (IsWhiteLine) {
 
                     if (!WasWhiteLine) { //la ligne précédente n'est pas blanche, on peut faire un bloc
                         printf("Vertical : len : %i\n", len);
-                        len++;
-                        if (NULL == (array = realloc(array, (len) * sizeof(Rect)))) {
-                            printf("Realloc == NULL \n");
-                            exit(-1);
-                        }
-
-                        Rect new_Rect;
-                        new_Rect.x = frst_x;
-                        new_Rect.y = rect_y;
-                        new_Rect.width = i - frst_x;
-                        new_Rect.height = rect_height;
-                        array[len-1] = new_Rect;
-
+                        list = AddElement(list,frst_x,rect_y,i - frst_x, rect_height);
                         //Draw_Rect(mask,new_Rect);
-
                         do_it_again++; //on a une ligne blanche donc on devra refaire forcément un tour sur tt les
                     }
                     else
                     {
-                        Rect blueline;
-                        blueline.height = relativ_rect_height;
-                        blueline.width = 0;
-                        blueline.x = i;
-                        blueline.y = frst_y;
+                        Rect blueline = CreateRect(i, frst_y, 0, relativ_rect_height);
                         Draw_Rect(mask, blueline, 42);
                     }
                     WasWhiteLine = 1; //true
@@ -278,24 +260,10 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHo
                     WasWhiteLine = 0; //false
                 }
             }
-
             if (!WasWhiteLine  && rect_width> 0) { //la ligne précédente n'est pas blanche, on peut faire un bloc
-                len++;
-                if (!(array = realloc(array, (len) * sizeof(Rect)))) {
-                    exit(-1);
-                }
-                printf("Horizontal : len : %i\n", len);
-                Rect new_Rect;
-                new_Rect.x = frst_x;
-                new_Rect.y = frst_y;
-                new_Rect.width = rect_width - frst_x - 1;
-                new_Rect.height = rect_height;
-
-                array[len-1] = new_Rect;
+                list = AddElement(list, frst_x, frst_y, rect_width - frst_x - 1, rect_height);
                 //Draw_Rect(mask,new_Rect);
             }
-
-
         }
 
         /*///////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -320,30 +288,13 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHo
 
                     if (!WasWhiteLine) { //la ligne précédente n'est pas blanche, on peut faire un bloc
                         printf("Horizontal : len : %i\n", len);
-                        len++;
-                        if (NULL == (array = realloc(array, (len) * sizeof(Rect)))) {
-                            printf("Realloc == NULL \n");
-                            exit(-1);
-                        }
-
-                        Rect new_Rect;
-                        new_Rect.x = rect_x;
-                        new_Rect.y = frst_y;
-                        new_Rect.width = rect_width;
-                        new_Rect.height = i - frst_y;
-                        array[len-1] = new_Rect;
-
+                        list = AddElement(list, rect_x, frst_y, rect_width, i - frst_y);
                         //Draw_Rect(mask,new_Rect);
-
                         do_it_again++; //on a une ligne blanche donc on devra refaire forcément un tour sur tt les
                     }
                     else
                     {
-                        Rect blueline;
-                        blueline.height = 0;
-                        blueline.width = relativ_rect_width;
-                        blueline.x = frst_x;
-                        blueline.y = i;
+                        Rect blueline = CreateRect(frst_x, i, relativ_rect_width, 0);
                         Draw_Rect(mask, blueline, 42);
                     }
                     WasWhiteLine = 1; //true
@@ -358,19 +309,7 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHo
 
             if (!WasWhiteLine && rect_height > 0) { //la ligne précédente n'est pas blanche, on peut faire un bloc
                 printf("Horizontal : len : %i\n", len);
-                len++;
-                if (!(array = realloc(array, (len) * sizeof(Rect)))) {
-                    exit(-1);
-                }
-                Rect new_Rect;
-                new_Rect.x = rect_x;
-                new_Rect.y = frst_y;
-                new_Rect.width = rect_width;
-                new_Rect.height = rect_height - frst_y - 1;
-
-                array[len-1] = new_Rect;
-
-                //Draw_Rect(mask,new_Rect, 42);
+                list = AddElement(list, rect_x, frst_y, rect_width, rect_height - frst_y - 1);
             }
         }
 
@@ -378,11 +317,6 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHo
 
     printf("Final : len : %i\n", len);
     Rect_Mask_Couple res;
-
-    //FreeFirst
-    list.lenght = len;
-    list.list = array;
-
     res.mask = mask;
     res.rect_list = list;
 
@@ -396,6 +330,28 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHo
    // }
 
     return res;
+}
+
+Rect CreateRect(int x, int y, int width, int height)
+{
+
+    Rect new_Rect;
+    new_Rect.x = x;
+    new_Rect.y = y;
+    new_Rect.width = width;
+    new_Rect.height = height;
+
+    return new_Rect;
+}
+
+Rect_List AddElement(Rect_List list, int x, int y, int width, int height)
+{
+    list.lenght = list.lenght + 1;
+    if (!(list.list = realloc(list.list, (list.lenght) * sizeof(Rect)))) {
+        exit(-1);
+    }
+    list.list[list.lenght-1] = CreateRect(x, y, width, height);
+    return list;
 }
 
 SDL_Surface* Draw_Rect(SDL_Surface* mask, Rect rect, Uint32 pixel_color) {
