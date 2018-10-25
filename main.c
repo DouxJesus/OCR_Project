@@ -80,21 +80,21 @@ int main(int argc, char** argv) {
     wait_for_keypressed();
 
     /////////////////////////////////////////////////
-    printf("RSLA :  CreateRect \n");
-    Rect* list = Create_Rect_List(image_mask31);
+    printf("RSLA :  CreateListRect \n");
+    Rect_List list_rect = Create_Rect_List(image_mask31);
     printf("RSLA :  GetRect \n");
-    list = Get_Rect(image_mask31, list, 1, 0);
-    update_surface(screen_surface, image_mask31);
+
+    Rect_Mask_Couple result = Get_Rect(image_mask31, list_rect, 0, 0, 4);
+    update_surface(screen_surface, result.mask);
     wait_for_keypressed();
-
-    //Draw_Rect(image_mask31, list[0]);
-    //Draw_Rect(image_mask31, list[1]);
-    //Draw_Rect(image_mask31, list[2]);
-
-    update_surface(screen_surface, image_mask31);
-
+    update_surface(screen_surface, image_surface);
     wait_for_keypressed();
-
+    Uint32 pixel_rouge = SDL_MapRGB(image_surface->format, 255, 0, 0);
+    for (int i = 0; i < 100; ++i) {
+        image_surface = Draw_Rect(image_surface, result.rect_list.list[i], pixel_rouge);
+    }
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
     /*       /////////////////////////////////////////////////
      printf("RSLA : vertical 2\n");
      SDL_Surface* image_mask32 = NULL;
@@ -115,6 +115,7 @@ int main(int argc, char** argv) {
     SDL_FreeSurface(image_mask2);
     SDL_FreeSurface(image_mask3);
 
+    SDL_FreeSurface(image_mask31);
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
     return 0;

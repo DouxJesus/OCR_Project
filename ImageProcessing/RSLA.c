@@ -165,9 +165,9 @@ SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 }
 
 
-Rect* Create_Rect_List(SDL_Surface* mask)
+Rect_List Create_Rect_List(SDL_Surface* mask)
 {
-    //int lenght = 1;
+    int lenght = 1;
     Rect* array;
     if(!(array = malloc(sizeof(Rect))))
     {
@@ -179,34 +179,53 @@ Rect* Create_Rect_List(SDL_Surface* mask)
     first_mask.width = mask->w;
     first_mask.height = mask->h;
     array[0]= first_mask;
-    return array;
+
+    Rect_List res;
+    res.lenght = lenght;
+    res.list = array;
+
+    return res;
 }
 
-Rect* Get_Rect(SDL_Surface* mask, Rect* array, int lenght, int IsHorizontalPass) {
 
-    int do_it_again = 0;
+//Get_Rect
+//took a mask, a list of rectangles, the point from when we begin the loop and a bool : is it an horizontal pass or not
+//return the list of blocs from the mask + mask
+Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHorizontalPass, int iteration) {
 
-    int len = lenght;
+    if (iteration == 0)
+    {
+        Rect_Mask_Couple res;
+        res.mask = mask;
+        res.rect_list = list;
+        return res;
+    }
+    int do_it_again = 0; //false
+
+    Rect* array = list.list;
+
+    int len = list.lenght;
+    int init_lenght = len;
     int width = mask->w;
     int height = mask->h;
 
-    for (int k = 0; k < lenght; ++k) {
+    for (int k = begin; k < init_lenght; ++k) { //go through the list of rect
 
         Rect rec_mask = array[k];
+
         int rect_x = rec_mask.x, rect_y = rec_mask.y;
         int relativ_rect_width = rec_mask.width, relativ_rect_height = rec_mask.height;
-        int rect_width = rec_mask.width + rec_mask.x, rect_height = rec_mask.height + rec_mask.y;
+        int rect_width = relativ_rect_width + rec_mask.x, rect_height = relativ_rect_height + rec_mask.y;
 
-
-        //0 (faux) ou 1 (vrai)
-        int IsWhiteLine = 1; //true
         int WasWhiteLine = 0; //false
 
-        int frst_x = 0, frst_y = 0;
+        int frst_x = rect_x, frst_y = rect_y;
 
-        if (!IsHorizontalPass) {
+        /*///////////////////////////////////////////////////////////////////////////////////////////////*/
+        if (!IsHorizontalPass) { //Vetical Pass
             for (int i = rect_x; i < rect_width; i++) {
 
+                int IsWhiteLine = 1; //true
                 int j = rect_y;
                 while (IsWhiteLine == 1 && j < rect_height) {
 
@@ -217,93 +236,202 @@ Rect* Get_Rect(SDL_Surface* mask, Rect* array, int lenght, int IsHorizontalPass)
                     if (b < 127) { //le pixel est noir
                         IsWhiteLine = 0; //false
                     }
-
-                    if (IsWhiteLine) {
-
-                        if (!WasWhiteLine) { //la ligne précédente n'est pas blanche, on peut faire un bloc
-                            printf("first white line : new bloc \n");
-                            len++;
-                            if (NULL == (array = realloc(array, (len) * sizeof(Rect)))) {
-                                printf("Realloc == NULL \n");
-                                exit(-1);
-                            }
-
-                            Rect new_Rect;
-                            new_Rect.x = frst_x;
-                            new_Rect.y = frst_y;
-                            new_Rect.width = i - rect_x;
-                            new_Rect.height = j - rect_y;
-                            array[len-1] = new_Rect;
-
-                            Draw_Rect(mask,new_Rect);
-
-                            do_it_again++; //on a une ligne blanche donc on devra refaire forcément un tour sur tt les
-                        }
-                        WasWhiteLine = 1; //true
-                    } else
-                    {
-                        if(WasWhiteLine){//la ligne n'est pas blanche et celle d'avant l'était donc c'est un nouveau bloc
-                            printf("last white line \n");
-                            frst_x = i - 1;
-                            frst_y = j - 1;
-                        }
-                        WasWhiteLine = 0; //false
-                    }
-
                     j++;
+                }
+
+                if (IsWhiteLine) {
+
+                    if (!WasWhiteLine) { //la ligne précédente n'est pas blanche, on peut faire un bloc
+                        printf("Vertical : len : %i\n", len);
+                        len++;
+                        if (NULL == (array = realloc(array, (len) * sizeof(Rect)))) {
+                            printf("Realloc == NULL \n");
+                            exit(-1);
+                        }
+
+                        Rect new_Rect;
+                        new_Rect.x = frst_x;
+                        new_Rect.y = rect_y;
+                        new_Rect.width = i - frst_x;
+                        new_Rect.height = rect_height;
+                        array[len-1] = new_Rect;
+
+                        //Draw_Rect(mask,new_Rect);
+
+                        do_it_again++; //on a une ligne blanche donc on devra refaire forcément un tour sur tt les
+                    }
+                    else
+                    {
+                        Rect blueline;
+                        blueline.height = relativ_rect_height;
+                        blueline.width = 0;
+                        blueline.x = i;
+                        blueline.y = frst_y;
+                        Draw_Rect(mask, blueline, 42);
+                    }
+                    WasWhiteLine = 1; //true
+                } else
+                {
+                    if(WasWhiteLine){//la ligne n'est pas blanche et celle d'avant l'était donc c'est un nouveau rect
+                        frst_x = i;
+                    }
+                    WasWhiteLine = 0; //false
                 }
             }
 
-            if (!WasWhiteLine) { //la ligne précédente n'est pas blanche, on peut faire un bloc
-                printf("end of while, before wasn't a white line : new bloc \n");
+            if (!WasWhiteLine  && rect_width> 0) { //la ligne précédente n'est pas blanche, on peut faire un bloc
                 len++;
                 if (!(array = realloc(array, (len) * sizeof(Rect)))) {
                     exit(-1);
                 }
-
+                printf("Horizontal : len : %i\n", len);
                 Rect new_Rect;
                 new_Rect.x = frst_x;
                 new_Rect.y = frst_y;
-                new_Rect.width = rect_width - frst_x;
-                new_Rect.height = rect_height - frst_y;
+                new_Rect.width = rect_width - frst_x - 1;
+                new_Rect.height = rect_height;
 
                 array[len-1] = new_Rect;
-                do_it_again++; //on a une ligne blanche donc on devra refaire forcément un tour sur tt les
+                //Draw_Rect(mask,new_Rect);
+            }
+
+
+        }
+
+        /*///////////////////////////////////////////////////////////////////////////////////////////////*/
+        else { //Horizontal Pass
+            for (int i = rect_y; i < rect_height; i++) {
+
+                int IsWhiteLine = 1; //true
+                int j = rect_x;
+                while (IsWhiteLine == 1 && j < rect_width) {
+
+                    Uint32 pixel = get_pixel(mask, j, i);
+                    Uint8 r, g, b;
+                    SDL_GetRGB(pixel, mask->format, &r, &g, &b);
+
+                    if (b < 127) { //le pixel est noir
+                        IsWhiteLine = 0; //false
+                    }
+                    j++;
+                }
+
+                if (IsWhiteLine) {
+
+                    if (!WasWhiteLine) { //la ligne précédente n'est pas blanche, on peut faire un bloc
+                        printf("Horizontal : len : %i\n", len);
+                        len++;
+                        if (NULL == (array = realloc(array, (len) * sizeof(Rect)))) {
+                            printf("Realloc == NULL \n");
+                            exit(-1);
+                        }
+
+                        Rect new_Rect;
+                        new_Rect.x = rect_x;
+                        new_Rect.y = frst_y;
+                        new_Rect.width = rect_width;
+                        new_Rect.height = i - frst_y;
+                        array[len-1] = new_Rect;
+
+                        //Draw_Rect(mask,new_Rect);
+
+                        do_it_again++; //on a une ligne blanche donc on devra refaire forcément un tour sur tt les
+                    }
+                    else
+                    {
+                        Rect blueline;
+                        blueline.height = 0;
+                        blueline.width = relativ_rect_width;
+                        blueline.x = frst_x;
+                        blueline.y = i;
+                        Draw_Rect(mask, blueline, 42);
+                    }
+                    WasWhiteLine = 1; //true
+                } else
+                {
+                    if(WasWhiteLine){//la ligne n'est pas blanche et celle d'avant l'était donc c'est un nouveau rect
+                        frst_y = i;
+                    }
+                    WasWhiteLine = 0; //false
+                }
+            }
+
+            if (!WasWhiteLine && rect_height > 0) { //la ligne précédente n'est pas blanche, on peut faire un bloc
+                printf("Horizontal : len : %i\n", len);
+                len++;
+                if (!(array = realloc(array, (len) * sizeof(Rect)))) {
+                    exit(-1);
+                }
+                Rect new_Rect;
+                new_Rect.x = rect_x;
+                new_Rect.y = frst_y;
+                new_Rect.width = rect_width;
+                new_Rect.height = rect_height - frst_y - 1;
+
+                array[len-1] = new_Rect;
+
+                //Draw_Rect(mask,new_Rect, 42);
             }
         }
 
     }
 
-    /*if(do_it_again)
-    {
-        Get_Rect(mask, array, len, 0); // !IsHorizontalPass
-    }*/
+    printf("Final : len : %i\n", len);
+    Rect_Mask_Couple res;
 
-    return array;
+    //FreeFirst
+    list.lenght = len;
+    list.list = array;
+
+    res.mask = mask;
+    res.rect_list = list;
+
+    //if(do_it_again)
+    //{
+        //wait_for_keypressed();
+        if (IsHorizontalPass)
+            res = Get_Rect(mask, list, init_lenght, 0, iteration -1);
+        else
+            res = Get_Rect(mask, list, init_lenght, 1, iteration -1);
+   // }
+
+    return res;
 }
 
-void Draw_Rect(SDL_Surface* mask, Rect rect)
-{
-
+SDL_Surface* Draw_Rect(SDL_Surface* mask, Rect rect, Uint32 pixel_color) {
     printf("Draw  \n");
-    Uint32 blue = SDL_MapRGB(mask->format, 0, 0, 255);
+    if (pixel_color == 42)
+        pixel_color = SDL_MapRGB(mask->format, 0, 0, 255);
+
     int x = rect.x, y = rect.y;
     int width = rect.width, height = rect.height;
+    int w = mask->w, h = mask->h;
+        printf("%i - %i - %i - %i - %i - %i \n", x, y, width, height, w, h);
 
-    for (int i = 0; i < width; ++i) {
-        put_pixel(mask, x + i, y, blue);
-        put_pixel(mask, x + i, y - 1, blue);
-        put_pixel(mask, x + i, y + height - 1, blue);
-        put_pixel(mask, x + i, y + height , blue);
+        for (int i = 0; i < width && (x + i) < mask->w; ++i) {
+            put_pixel(mask, x + i, y, pixel_color);
+            if (height + y != 0)
+                put_pixel(mask, x + i, y + height - 1, pixel_color);
+        }
+
+    for (int j = 0; j < height && (y + j) < mask->h; ++j) {
+
+        put_pixel(mask, x, y + j, pixel_color);
+        if (width + x != 0)
+            put_pixel(mask, x + width - 1, y + j, pixel_color);
     }
-    for (int j = 0; j < height; ++j) {
-        put_pixel(mask, x, y + j, blue);
-        put_pixel(mask, x - 1, y + j, blue);
-        put_pixel(mask, x + width - 1, y + j, blue);
-        put_pixel(mask, x + width, y + j, blue);
-    }
+
+    return mask;
 }
 
+
+Rect_List FreeBeginningOfRectList(Rect_List list,Rect* rectangles, int init_len, int new_len)
+{
+    //TODO
+    list.list = rectangles;
+    list.lenght = new_len - init_len;
+    return list;
+}
 	//SDL_Rect** Rectangles;
 /*SDL_Surface Extract(SDL_Surface *img, SDL_Surface *mask3){
 	for( int y = 0; y < output->h; y++)
