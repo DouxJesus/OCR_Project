@@ -1,0 +1,143 @@
+//
+// Created by pyrd on 13/10/18.
+//
+
+#include "BlackAndWhite.h"
+#include "../Image_BMP/pixel_operations.h"
+#include "../Image_BMP/BMP.h"
+
+//global variable mini and maxi
+//refers to the maximum and minimum value of a pixel in the image
+Uint32 mini = 0, maxi = 255;
+
+//ToBlackOrWhite
+//take a image and the coordinate from an pixel and determine 
+//if its more a black or a white pixel from it seuil
+Uint32 ToBlackOrWhite(SDL_Surface* img, unsigned int i, unsigned int j, int seuil)
+{
+    Uint32 pixel = get_pixel(img, i, j);
+    Uint8 r, g, b;
+    SDL_GetRGB(pixel, img->format, &r, &g, &b);
+    Uint8 average = (r + g + b) / (Uint8) 3;
+
+    if (average > seuil)
+        pixel = SDL_MapRGB(img->format, 255, 255, 255);
+    else
+        pixel = SDL_MapRGB(img->format, 0, 0, 0);
+
+    return pixel;
+
+}
+
+//to_grayscale
+//make an image to grayscale from the average of each pixel
+//also calulus the maxi and mini of the image and change the global variable
+void to_grayscale(SDL_Surface *img)
+{
+    unsigned int width = (unsigned int) img->w;
+    unsigned int height = (unsigned int) img->h;
+    maxi = 0;
+    mini = 255;
+    for (unsigned int i = 0; i < width; i++) {
+        for (unsigned int j = 0; j < height; j++) {
+            Uint32 pixel = get_pixel(img, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, img->format, &r, &g, &b);
+            Uint32 average = (Uint32) (0.3*r + 0.59*g + 0.11*b);
+            if (average < mini)
+            {
+                mini = average;
+            }
+            if (average > maxi)
+            {
+
+                maxi = average;
+            }
+            pixel = SDL_MapRGB(img->format, average, average, average);
+            put_pixel(img, i, j, pixel);
+        }
+    }
+}
+
+//BlackAndWhite
+//From an image (more likely to be grayscale with accurate mini and maxi)
+//put the image into black and white (binarize)
+void BlackAndWhite(SDL_Surface* img)
+{
+    unsigned int height = img->h;
+    unsigned int weight = img->w;
+    int seuil = mini + (maxi - mini) / 2;
+    for (unsigned int i = 0; i < weight; ++i) {
+        for (unsigned int j = 0; j < height; ++j) {
+
+            put_pixel(img, i, j, ToBlackOrWhite(img, i, j, seuil));
+        }
+    }
+}
+
+int abs(int a)
+{
+    if (a < 0)
+        return -a;
+    return a;
+}
+
+/*void Contrast(SDL_Surface* img)
+{
+    unsigned int width = (unsigned int) img->w;
+    unsigned int height = (unsigned int) img->h;
+    for (int unsigned i = 0; i < width; i++) {
+        for (unsigned int j = 0; j < height; j++) {
+
+            Uint32 pixel = get_pixel(img, i, j);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, img->format, &r, &g, &b);
+
+            unsigned int k = i - 2, l = j - 2;
+            int average_around = 0, nb = 1;
+            Uint32 r_a = 0, g_a = 0, b_a = 0;
+            while (k < width && k <= i + 2)
+            {
+                if (k > 0) {
+                    unsigned int tmp = l;
+                    while (l < height && l <= j + 2) {
+                        if(l > 0) {
+                            Uint32 p = get_pixel(img, k, l);
+                            Uint8 r1, g1, b1;
+                            SDL_GetRGB(p, img->format, &r1, &g1, &b1);
+                           r_a += r1;
+                           b_a += b1;
+                           g_a += g1;
+                            nb++;
+                        }
+                        l++;
+                    }
+                    l = tmp;
+                }
+                k++;
+            }
+            if (nb != 0) {
+                int moy = SDL_MapRGB(img->format, r_a / nb, g_a / nb, b_a / nb);
+                int new_pix = abs(pixel - moy) / abs(pixel + moy);
+                put_pixel(img, i, j, new_pix);
+            }
+        }
+    }
+}*/
+
+/*void SauvolaBinarization(SDL_Surface* img)
+{
+
+}*/
+/*
+
+void BlackAndWhiteRelative(SDL_Surface* img)
+{
+//seuil relatif à l'image
+}
+
+
+void Sharpen(SDL_Surface* img)
+{
+//netteté
+}*/
