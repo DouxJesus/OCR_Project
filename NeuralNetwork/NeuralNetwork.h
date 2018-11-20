@@ -1,13 +1,21 @@
 #ifndef OCR_Neural_H
 #define OCR_Neural_H
 
-typedef struct Neural
-{
-    int val;
-    int* predes:
-    int plenght;
-    int* sucess;
+typedef struct Tuple{
+	int pos;
+	int cost;
+}Tuple;
+
+typedef struct Neural{
+	Tuple* predes;
+	Tuple* sucess;
+	int plenght;
     int slenght;
+}Neural;
+
+typedef struct Network
+{
+    Lists* val;
 } Neural;
 
 Neural CreateNeural(int val);
