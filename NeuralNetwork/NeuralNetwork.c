@@ -1,10 +1,10 @@
 #include "NeuralNetwork.h"
-
+#include <stdio.h>
 
 Neural CreateNeural(int val)
 {
 	Neural n;
-	n.val = val;
+	int val;
 	n.plenght = 0;
 	n.slenght = 0;
 	return n;
@@ -13,7 +13,7 @@ Neural CreateNeural(int val)
 Neural CreateCompleteNeural(int val, int* predes, int* sucess, int plen, int slen)
 {
 	Neural n;
-	n.val = val;
+	int val;
 	n->predes = predes;
 	n->sucess = sucess;
 	n.plenght = plen;

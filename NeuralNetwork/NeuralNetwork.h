@@ -7,6 +7,7 @@ typedef struct Tuple{
 }Tuple;
 
 typedef struct Neural{
+	int val;
 	Tuple* predes;
 	Tuple* sucess;
 	int plenght;
@@ -15,8 +16,8 @@ typedef struct Neural{
 
 typedef struct Network
 {
-    Lists* val;
-} Neural;
+    Neural* network;
+} Network;
 
 Neural CreateNeural(int val);
 Neural CreateCompleteNeural(int val, int* predes, int* sucess, int plen, int slen);
