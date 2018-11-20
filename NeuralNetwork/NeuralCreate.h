@@ -14,12 +14,18 @@ typedef struct Neural{
     int slenght;
 }Neural;
 
+typedef struct Network{
+	Neural* graph;
+	int* layers;
+}Network;
 
-Neural CreateNeural(int val);
-Neural CreateCompleteNeural(int val, int* predes, int* sucess, int plen, int slen);
-Neural AddPredessesseur(Neural n, int predes);
-Neural AddSuccesseur(Neural n, int sucess);
+
+Neural CreateNeural(double val);
+Neural CreateCompleteNeural(double val, Tuple* predes, Tuple* sucess, int plen, int slen);
+Neural AddPredessesseur(Neural n, Tuple predes);
+Neural AddSuccesseur(Neural n, Tuple sucess);
 void FreeNeural(Neural n);
+Tuple CreateTuple(int pos, double cost);
 
 
 #endif
