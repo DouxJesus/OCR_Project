@@ -1,4 +1,3 @@
-#include "NeuralNetwork.h"
 #include <stdio.h>
 
 Neural CreateNeural(double val)
@@ -85,8 +84,7 @@ Tuple CreateTuple(int pos, double cost)
 	return t;
 }
 
-
-Neural* initialize(int height, int colbegin, int colend)
+Neural* CreateNetwork(int height, int colbegin, int colend)
 {
 //Chaque ligne de Neural**: une couche de neurones
 //chaque col : un sommet de la couche (chaque couche ne fait pas forcément la même taille)
@@ -94,23 +92,3 @@ Neural* initialize(int height, int colbegin, int colend)
 
 	return network;
 }
-
-float sigmoid(float x)
-{
-    return 1 / (1 + expf(-x));
-}
-
-/*Neural** propagation(Neural** network, char[] returnvalue)
-{
-
-}
-
-Neural** retro(Neural** network, int target)
-{
-
-}
-
-Neural** train(Neural** network, char[] path)
-{
-
-}*/
