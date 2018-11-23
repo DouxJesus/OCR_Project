@@ -16,7 +16,9 @@ typedef struct Neural{
 
 typedef struct Network{
 	Neural* graph;
+	int graphlen;
 	int* layers;
+	int laylenght;
 }Network;
 
 
