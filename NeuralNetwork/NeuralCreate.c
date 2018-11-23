@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 Neural CreateNeural(double val)
 {
@@ -84,11 +85,66 @@ Tuple CreateTuple(int pos, double cost)
 	return t;
 }
 
-Neural* CreateNetwork(int height, int colbegin, int colend)
+double frand_a_b(double a, double b){
+
+    return ( rand()/(double)RAND_MAX ) * (b-a) + a
+
+   }
+
+Neural* CreateNetwork(int* layers, int laylenght)
 {
 //Chaque ligne de Neural**: une couche de neurones
 //chaque col : un sommet de la couche (chaque couche ne fait pas forcément la même taille)
 	Neural* network;
+	network.laylenght = laylenght;
+	network.layers = layers;
+	network.graphlen = 0;
+
+	for (int i = 0; i < laylenght; ++i)
+	{
+		int count = layers[i];
+		if (network.graphlen != 0)
+		{
+			if(!(n.predes = realloc(network.graph, (network.graphlen + count + 1) * sizeof(Tuple))))
+    		{
+        		exit(-1);
+    		}
+    		network.graphlen += count + 1;
+		}
+		else
+		{
+			//premiere couche
+			if(!(network.graph = calloc(count + 1, sizeof(Neural))))
+    		{
+        		exit(-1);
+    		}
+    		network.graphlen = count + 1;
+		}
+		for (int j = 0; j <  count; ++j)
+		{
+			double randbl = frand_a_b(0, 1);
+			Neural n;
+			n = CreateNeural(randbl);
+			
+			if(j != 0)
+			{
+				int countpredes = layers[i - 1];
+				for (int l = 0; l < countpredes; ++l)
+				{
+					/* code */
+				}
+			}
+			if(j < count - 1)
+			{
+				int countsucess = layers[i + 1];
+				for (int k = 0; k < countsucess; ++k)
+				{
+					/* code */
+				}
+			}
+		}
+
+	}
 
 	return network;
 }
