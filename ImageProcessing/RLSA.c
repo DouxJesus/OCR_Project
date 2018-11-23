@@ -2,7 +2,7 @@
 // Created by pyrd on 16/10/18.
 //
 
-#include "RSLA.h"
+#include "RLSA.h"
 #include "../Image_BMP/pixel_operations.h"
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
@@ -189,7 +189,26 @@ Rect_List Create_Rect_List(SDL_Surface* mask)
     return res;
 }
 
+// 1. faire une queue et rentrer le premier rect de la taille de l'image
+// 2. faire une liste de rectangle (la liste à retourner, la liste qui contiens les rectangles "finis")
+// 3. faire fonction d'extraction
+    //3.1 defile un element
+    //3.2 apply process sur ce rect depiler
+    //3.3 si reste des choses à faire, on empile 
+    //3.4 sinon le rect est fini, on l'ajoute à la liste
+    
+//Function to extract the rectangles from the images with the mask given
+Rect_List * Extraction(SDL_Surface* mask, SDL_Surface * image){
 
+}
+
+
+
+
+//==============================MARINE'S STUFF=============================================================================
+
+
+/*
 //Get_Rect
 //took a mask, a list of rectangles, the point from when we begin the loop and a bool : is it an horizontal pass or not
 //return the list of blocs of text from the mask
@@ -224,7 +243,6 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin,
 
         int frst_x = rect_x, frst_y = rect_y;
 
-        /*///////////////////////////////////////////////////////////////////////////////////////////////*/
         if (!IsHorizontalPass) { //Vertical Pass
             for (int i = rect_x; i < rect_width; i++) {
                 int IsWhiteLine = 1; //true
@@ -268,7 +286,6 @@ Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin,
             }
         }
 
-        /*///////////////////////////////////////////////////////////////////////////////////////////////*/
         else { //Horizontal Pass
             for (int i = rect_y; i < rect_height; i++) {
 
@@ -399,3 +416,4 @@ Rect_List FreeBeginningOfRectList(Rect_List list,Rect* rectangles, int init_len,
     list.lenght = new_len - init_len;
     return list;
 }
+*/
