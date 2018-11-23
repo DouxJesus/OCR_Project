@@ -6,7 +6,10 @@
 #include "../Image_BMP/pixel_operations.h"
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
+#include <Queue.h>
 
+#define MIN_SIZE_RECT_W 64
+#define MIN_SIZE_RECT_H 64
 
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 	if( img->flags & SDL_SRCCOLORKEY ) {
@@ -164,30 +167,7 @@ SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output){
 	return output;
 }
 
-//Create_Rect_List
-//From a mask, create a Rect List of lenght = 1 
-//an containing as a fisrt item the whole mask
-Rect_List Create_Rect_List(SDL_Surface* mask)
-{
-    int lenght = 1;
-    Rect* array;
-    if(!(array = malloc(sizeof(Rect))))
-    {
-        exit(-1);
-    }
-    Rect first_mask;
-    first_mask.x = 0;
-    first_mask.y = 0;
-    first_mask.width = mask->w;
-    first_mask.height = mask->h;
-    array[0]= first_mask;
 
-    Rect_List res;
-    res.lenght = lenght;
-    res.list = array;
-
-    return res;
-}
 
 // 1. faire une queue et rentrer le premier rect de la taille de l'image
 // 2. faire une liste de rectangle (la liste à retourner, la liste qui contiens les rectangles "finis")
@@ -196,18 +176,96 @@ Rect_List Create_Rect_List(SDL_Surface* mask)
     //3.2 apply process sur ce rect depiler
     //3.3 si reste des choses à faire, on empile 
     //3.4 sinon le rect est fini, on l'ajoute à la liste
-    
-//Function to extract the rectangles from the images with the mask given
-Rect_List * Extraction(SDL_Surface* mask, SDL_Surface * image){
+
+
+//Initialise the queue given in parameter, by enqueuing the first rectangle, which is the size of the image
+int InitQueue(Queue* q, int w, int h){
+    Node* pN = (Node*) malloc(sizeof (Node));
+    pN->data = CreateRect(0, 0, w, h);
+    Enqueue(q, pN);
+    Enqueue(q, NULL);
+    return 1;
+}
+
+void AddToList(Rect_List* list, Rect* item){
+    list->lenght = list->lenght + 1;
+    if (!(list->list = realloc(list->list, (list->lenght) * sizeof(Rect*)))) {
+        exit(-1);
+    }
+    list->list[list->lenght-1] = item;
+}
+
+Rect* CreateRect(int x, int y, int width, int height)
+{
+    Rect* rect = (Rect*) malloc(sizeof(Rect));
+    rect->x = x;
+    rect->y = y;
+    rect->width = width;
+    rect->height = height;
+    return rect;
+}
+
+void ExtractionProcess(SDL_Surface *mask, Rect * rectangle, int horizontal){
 
 }
 
+    
+//Function to extract the rectangles from the images with the mask given
+Rect_List* Extraction(SDL_Surface* mask, SDL_Surface * image){
+    Queue *q = ConstructQueue(-1);                    //Queue of rectangles to process
+    Rect_List* output = malloc(sizeof(Rect_List));   //Array of rectangles ready
+    InitQueue(q, image->w, image->h);
+    int horizontalPass = 1;                         //Define if process do a horizontal pass or not
+
+    while (!isEmpty(q)) {
+        Node* pNode = Dequeue(q);
+        if(pNode == NULL && !isEmpty(q)){
+            horizontalPass = !horizontalPass;       //Switch between Horizontal Passes & Vertical Passes
+            Enqueue(q, NULL);
+        }
+        else{
+            Rect* tmp = pNode->data;
+            if(tmp->height <= MIN_SIZE_RECT_H || tmp->width <= MIN_SIZE_RECT_W){    //Rectangle is considered finished, is then added to output list
+                AddToList(output, tmp);
+            } else {                                                                //Rectangle is not finished, apply process another time
+                ExtractionProcess(mask, tmp, horizontalPass);
+            }   
+        }
+    }
+
+
+    DestructQueue(q);
+    return output;
+}
 
 
 
 //==============================MARINE'S STUFF=============================================================================
 
+// //Init_Rect_List
+// //initialisation of the List
+// //an containing as a fisrt item the whole mask
+// Rect_List Init_Rect_List(SDL_Surface* mask)
+// {
+//     int lenght = 1;
+//     Rect* array;
+//     if(!(array = malloc(sizeof(Rect))))
+//     {
+//         exit(-1);
+//     }
+//     Rect first_mask;
+//     first_mask.x = 0;
+//     first_mask.y = 0;
+//     first_mask.width = mask->w;
+//     first_mask.height = mask->h;
+//     array[0]= first_mask;
 
+//     Rect_List res;
+//     res.lenght = lenght;
+//     res.list = array;
+
+//     return res;
+// }
 /*
 //Get_Rect
 //took a mask, a list of rectangles, the point from when we begin the loop and a bool : is it an horizontal pass or not
