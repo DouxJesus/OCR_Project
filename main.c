@@ -14,8 +14,8 @@ void updateStep(SDL_Surface* screen, SDL_Surface* image, char message[], int wai
     printf("Press a key to continue ...\n");
     printf(" ====");
 
-    int len = 28;
-    int len2 = strlen(message);
+    size_t len = 28;
+    size_t len2 = strlen(message);
     if(len2 > len){
         len = len2; 
     }
