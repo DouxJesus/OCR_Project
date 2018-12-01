@@ -6,7 +6,7 @@
 #include "Image_BMP/pixel_operations.h"
 #include "Image_BMP/BMP.h"
 #include "ImageProcessing/RLSA.h"
-
+#include "NeuralNetwork/NeuralCreate.h"
 
 void updateStep(SDL_Surface* screen, SDL_Surface* image, char message[], int wait){
     update_surface(screen, image);
@@ -78,20 +78,36 @@ int main(int argc, char** argv) {
         SDL_FreeSurface(image_mask2);
         SDL_FreeSurface(image_mask3);
 
-        updateStep(screen_surface, image_mask4, "RLSA -- Final Mask", 0);
+        updateStep(screen_surface, image_mask4, "RLSA -- Final Mask", 1);
 
         Rect_List* RLSA_Output = Extraction(image_mask4);
         DisplayRLSA(RLSA_Output, image_surface);
         ClearList(RLSA_Output);
         updateStep(screen_surface, image_surface, "RLSA -- Display", 1);
-    /////////////////////////////////////////////////
         printf("Quitting ...\n");
         SDL_FreeSurface(image_mask4);
         SDL_FreeSurface(image_surface);
         SDL_FreeSurface(screen_surface);
     } else {
-        printf("You need to call ./main with an argument \n");
-        exit(1);
-    }
+       // printf("You need to call ./main with an argument \n");
+        //exit(1);
+
+    int* layers;
+        if(!(layers = malloc(4 * sizeof(int))))
+        {
+            exit(-1);
+        }
+    layers[0] = 4;
+    layers[1] = 5;
+    layers[2] = 3;
+    layers[10] = 5;
+
+    int laylen = 4;
+
+    Network net = CreateNetwork(layers, laylen);
+    SaveNetwork(net);
+    FreeNetwork(net);
+    LoadNetwork();
+}
     return 0;
 }
