@@ -230,92 +230,6 @@ Rect* CreateRect(int x, int y, int width, int height)
 }
 
 
-
-// void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizontal){
-//     int rect_x = rectangle->x, rect_y = rectangle->y;           //coordinate of point up-left of the rectangle
-//     int relative_rect_width = rectangle->width;
-//     int relative_rect_height = rectangle->height;              //relative length of the rectangle
-//     int rect_width = relative_rect_width + rectangle->x;
-//     int rect_height = relative_rect_height + rectangle->y;     //where the rectangle actually ends
-//     int first_x = rect_x, first_y = rect_y;
-
-//     int isWhiteLine = 1;
-//     int wasWhiteLine = 0;
-
-//     if(horizontal == 1){
-//         wasWhiteLine = 0;
-//         for(int j = rect_y; j < rect_height; j++){
-//             isWhiteLine = 1; 
-//             int i = rect_x;
-//             //IDEA : THRESHOLD GIVEN IN PARAM or CONST
-//             //Work here
-//             while(isWhiteLine == 1 && i < rect_width){
-//                 Uint32 pixel = get_pixel(mask, i, j);
-//                 Uint8 r, g, b;
-//                 SDL_GetRGB(pixel, mask->format, &r, &g, &b);
-//                 if(b < 127){                              //Pixel is black
-//                     isWhiteLine = 0;                      //Line has a black line, is not a white line
-//                 }
-//                 i++;
-//             }
-//             if (isWhiteLine){                              //if line IS a white line
-//                 if (!wasWhiteLine){                        //Previous line was a BLACK line,
-//                     Node *pN = (Node*) malloc(sizeof (Node));
-//                     pN->data = CreateRect(rect_x, first_y, rect_width, j - first_y);
-//                     Enqueue(q, pN);
-//                 }
-//                     wasWhiteLine = 1; //true
-//             } else {
-//                 if(wasWhiteLine){                           //Line is not WHITE, is BLACK, previous one was -> New Rectangle
-//                     first_y = j;
-//                 }
-//                 wasWhiteLine = 0; //false
-//             }
-//         }
-//         if (!wasWhiteLine && rect_height > 0) { //la ligne précédente n'est pas blanche, on peut faire un bloc
-//             Node *pN = (Node*) malloc(sizeof (Node));
-//             pN->data =  CreateRect(rect_x, first_y, rect_width, rect_height - first_y - 1);
-//             Enqueue(q, pN);
-//         }
-//     } else {    //Vertical pass
-//         wasWhiteLine = 0;
-//         for (int i = rect_x; i < rect_width; i++){
-//             isWhiteLine = 1;
-//             int j = rect_y;
-//             //IDEA : THRESHOLD GIVEN IN PARAM or CONST
-//             //Work here
-//             while(isWhiteLine == 1 && j < rect_height){
-//                 Uint32 pixel = get_pixel(mask, i, j);
-//                 Uint8 r, g, b;
-//                 SDL_GetRGB(pixel, mask->format, &r, &g, &b);
-//                 if(b < 127){                              //Pixel is black
-//                     isWhiteLine = 0;                        //Line has a black line, is not a white line
-//                 }
-//                 j++;
-//             }
-//             if (isWhiteLine){                              //if line IS a white line
-//                 if (!wasWhiteLine){                        //Previous line was a BLACK line,
-//                     Node *pN = (Node*) malloc(sizeof (Node));
-//                     pN->data = CreateRect(first_x, rect_y, i - first_x, rect_height);
-//                     Enqueue(q, pN);
-//                 }
-//                 wasWhiteLine = 1; //true
-//             } else {
-//                 if(wasWhiteLine){                           //Line is not WHITE, is BLACK, previous one was -> New Rectangle
-//                     first_y = j;
-//                 }
-//                 wasWhiteLine = 0; //false
-//             }
-//         }
-//         if (!wasWhiteLine && rect_height > 0) { //la ligne précédente n'est pas blanche, on peut faire un bloc
-//             Node *pN = (Node*) malloc(sizeof (Node));
-//             pN->data = CreateRect(first_x, first_y, rect_width - first_x - 1, rect_height);
-//             Enqueue(q, pN);
-            
-//         }
-//     }
-// }
-
 void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizontal){
     int rect_x = rectangle->x, rect_y = rectangle->y;           //coordinate of point up-left of the rectangle
     int relative_rect_width = rectangle->width;
@@ -334,18 +248,18 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
             int i = rect_x;
             //IDEA : THRESHOLD GIVEN IN PARAM or CONST
             //Work here
-            while(isWhiteLine == 1 && i < rect_width){     //Check isWhiteLine
+            while(isWhiteLine == 1 && i < rect_width){      //Check isWhiteLine
                 Uint32 pixel = get_pixel(mask, i, j);
                 Uint8 r, g, b;
                 SDL_GetRGB(pixel, mask->format, &r, &g, &b);
-                if(b < 127){                              //Pixel is black
-                    isWhiteLine = 0;                      //Line has a black line, is not a white line
+                if(b < 127){                                //Pixel is black
+                    isWhiteLine = 0;                        //Line has a black line, is not a white line
                 }
                 i++;
             }
             if (isWhiteLine){                              //if line IS a white line
                 if (!wasWhiteLine){                        //End of bloc  --- Was = 1, Is = 0
-                    Node *pN = (Node*) malloc(sizeof (Node));
+                    Node *pN = (Node*) malloc(sizeof(Node));
                     pN->data = CreateRect(rect_x, first_y + rect_y, relative_rect_width, j - first_y);
                     Enqueue(q, pN);
                 }
