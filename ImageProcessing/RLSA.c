@@ -343,9 +343,11 @@ Rect_List* Extraction(SDL_Surface* mask){
         }
         else{
             Rect* tmp = pNode->data;
+            printf("Node : %ih %iw", tmp->height, tmp->width);
+            printf(" - Still in queue : %i\n", q->size);
             if(tmp->height <= MIN_SIZE_RECT_H || tmp->width <= MIN_SIZE_RECT_W){    //Rectangle is considered finished, is then added to output list
                 AddToList(output, tmp);
-                printf("finish: %i - %i\n", tmp->height, tmp->width);
+                
             } else {                                                                //Rectangle is not finished, apply process another time
                 ExtractionProcess(q, mask, tmp, horizontalPass);
                 printf("process :%i\n", tst);
