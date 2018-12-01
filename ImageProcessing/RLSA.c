@@ -285,7 +285,7 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
             //IDEA : THRESHOLD GIVEN IN PARAM or CONST
             //Work here
             while(isWhiteLine == 1 && j < rect_height){
-                Uint32 pixel = get_pixel(mask, j, i);
+                Uint32 pixel = get_pixel(mask, i, j);
                 Uint8 r, g, b;
                 SDL_GetRGB(pixel, mask->format, &r, &g, &b);
                 if(b < 127){                              //Pixel is black
