@@ -7,8 +7,8 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 
-#define MIN_SIZE_RECT_W 30
-#define MIN_SIZE_RECT_H 30
+#define MIN_SIZE_RECT_W 100
+#define MIN_SIZE_RECT_H 100
 
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 	if( img->flags & SDL_SRCCOLORKEY ) {
@@ -238,8 +238,10 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
     int rect_width = relative_rect_width + rectangle->x;
     int rect_height = relative_rect_height + rectangle->y;     //where the rectangle actually ends
     int first_x = rect_x, first_y = rect_y;
+
     int isWhiteLine = 1;
     int wasWhiteLine = 0;
+
     if(horizontal){
         wasWhiteLine = 0;
         for(int j = rect_y; j < rect_height; j++){
@@ -248,7 +250,7 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
             //IDEA : THRESHOLD GIVEN IN PARAM or CONST
             //Work here
             while(isWhiteLine == 1 && i < rect_width){
-                Uint32 pixel = get_pixel(mask, i, j);
+                Uint32 pixel = get_pixel(mask, j, i);
                 Uint8 r, g, b;
                 SDL_GetRGB(pixel, mask->format, &r, &g, &b);
                 if(b < 127){                              //Pixel is black
@@ -261,13 +263,7 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
                     Node *pN = (Node*) malloc(sizeof (Node));
                     pN->data = CreateRect(rect_x, first_y, rect_width, j - first_y);
                     Enqueue(q, pN);
-                    //Draw_Rect(mask,new_Rect);
                 }
-                    // else
-                    // {
-                    //     Rect blueline = CreateRect(frst_x, j, relativ_rect_width, 0);
-                    //     Draw_Rect(mask, blueline, 42);
-                    // }
                     wasWhiteLine = 1; //true
             } else {
                 if(wasWhiteLine){                           //Line is not WHITE, is BLACK, previous one was -> New Rectangle
@@ -289,7 +285,7 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
             //IDEA : THRESHOLD GIVEN IN PARAM or CONST
             //Work here
             while(isWhiteLine == 1 && j < rect_height){
-                Uint32 pixel = get_pixel(mask, i, j);
+                Uint32 pixel = get_pixel(mask, j, i);
                 Uint8 r, g, b;
                 SDL_GetRGB(pixel, mask->format, &r, &g, &b);
                 if(b < 127){                              //Pixel is black
@@ -302,12 +298,7 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
                     Node *pN = (Node*) malloc(sizeof (Node));
                     pN->data = CreateRect(first_x, rect_y, i - first_x, rect_height);
                     Enqueue(q, pN);
-                    //Draw_Rect(mask,new_Rect);
                 }
-                // else {
-                //     Rect blueline = CreateRect(frst_x, j, relativ_rect_width, 0);
-                //     Draw_Rect(mask, blueline, 42);
-                // }
                 wasWhiteLine = 1; //true
             } else {
                 if(wasWhiteLine){                           //Line is not WHITE, is BLACK, previous one was -> New Rectangle
