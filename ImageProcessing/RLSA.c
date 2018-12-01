@@ -240,10 +240,10 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
     int first_x = rect_x, first_y = rect_y;
 
     int isWhiteLine = 1;
-    int wasWhiteLine = 0;
+    int wasWhiteLine = 1;
 
     if(horizontal){
-        wasWhiteLine = 0;
+        wasWhiteLine = 1;
         for(int j = rect_y; j < rect_height; j++){
             isWhiteLine = 1; 
             int i = rect_x;
@@ -278,7 +278,7 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
             Enqueue(q, pN);
         }
     } else {    //Vertical pass
-        wasWhiteLine = 0;
+        wasWhiteLine = 1;
         for (int i = rect_x; i < rect_width; i++){
             isWhiteLine = 1;
             int j = rect_y;
