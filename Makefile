@@ -8,7 +8,7 @@ CPPFLAGS= `pkg-config --cflags sdl` -MMD
 CFLAGS=  -Wall -Wextra -g -std=c99 -O3 -IImageProcessing/ -IImage_BMP/ -INeuralNetwork/
 LDFLAGS=
 EXEC=main
-SRC= main.c ImageProcessing/BlackAndWhite.c Image_BMP/BMP.c Image_BMP/pixel_operations.c ImageProcessing/RLSA.c NeuralNetwork/NeuralCreate.c
+SRC= main.c ImageProcessing/BlackAndWhite.c Image_BMP/BMP.c Image_BMP/pixel_operations.c ImageProcessing/RLSA.c ImageProcessing/Queue.c  NeuralNetwork/NeuralCreate.c
 
 LDLIBS= `pkg-config --libs sdl` -lSDL_image
 OBJ= $(SRC:.c=.o)
