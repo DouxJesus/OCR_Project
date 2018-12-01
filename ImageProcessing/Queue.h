@@ -1,7 +1,6 @@
 #ifndef OCR_QUEUE_H
 #define OCR_QUEUE_H
 #include <stdlib.h>
-#include <stdio.h>
 
 
 typedef struct Node {

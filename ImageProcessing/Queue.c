@@ -1,6 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-
+#include "Queue.h"
 
 Queue *ConstructQueue(int limit) {
     Queue *queue = (Queue*) malloc(sizeof (Queue));
@@ -24,7 +22,7 @@ void DestructQueue(Queue *q) {
         node = Dequeue(q);
         free(node);
     }
-    free(queue);
+    free(q);
 }
 
 int Enqueue(Queue *q, Node *item) {
@@ -56,7 +54,7 @@ Node * Dequeue(Queue *q) {
     Node *item;
     if (isEmpty(q))
         return NULL;
-    item = pQueue->head;
+    item = q->head;
     q->head = (q->head)->prev;
     q->size--;
     return item;
