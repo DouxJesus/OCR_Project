@@ -4,11 +4,12 @@
 #include "ImageProcessing/BlackAndWhite.h"
 #include "Image_BMP/pixel_operations.h"
 #include "Image_BMP/BMP.h"
-#include "ImageProcessing/RSLA.h"
+#include "ImageProcessing/RLSA.h"
+#include "NeuralNetwork/NeuralCreate.h"
 
 int main(int argc, char** argv) {
     printf("Hello, OCR Project!\n");
-	if (argc > 2)
+	/*if (argc > 2)
 		printf("you put a lot of parameters !");
     char* param = argv[1];
 
@@ -102,6 +103,23 @@ if (param)
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);}
 else
-	printf("You should call /.main with an argument \n");
+	printf("You should call /.main with an argument \n");*/
+
+    int* layers;
+        if(!(layers = malloc(4 * sizeof(int))))
+        {
+            exit(-1);
+        }
+    layers[0] = 4;
+    layers[1] = 5;
+    layers[2] = 3;
+    layers[10] = 5;
+
+    int laylen = 4;
+
+    Network net = CreateNetwork(layers, laylen);
+    SaveNetwork(net);
+    FreeNetwork(net);
+    LoadNetwork();
     return 0;
 }
