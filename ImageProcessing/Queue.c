@@ -6,7 +6,7 @@ Queue *ConstructQueue(int limit) {
         return NULL;
     }
     if (limit <= 0) {
-        limit = 65535;
+        limit = 32000;
     }
     queue->limit = limit;
     queue->size = 0;

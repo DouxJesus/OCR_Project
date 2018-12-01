@@ -31,7 +31,7 @@ void updateStep(SDL_Surface* screen, SDL_Surface* image, char message[], int wai
 void DisplayRLSA(Rect_List* rect_list, SDL_Surface* image){
     int i = 0;
     while(i < rect_list->length){
-        Draw_Rect(image, *rect_list->list[i]);
+        Draw_Rect(image, *rect_list->list[i], i % 2);
         i++;
     }
 }

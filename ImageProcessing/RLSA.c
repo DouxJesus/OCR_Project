@@ -7,8 +7,8 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 
-#define MIN_SIZE_RECT_W 32
-#define MIN_SIZE_RECT_H 32
+#define MIN_SIZE_RECT_W 30
+#define MIN_SIZE_RECT_H 30
 
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 	if( img->flags & SDL_SRCCOLORKEY ) {
@@ -182,11 +182,24 @@ int InitQueue(Queue* q, int w, int h){
     Node* pN = (Node*) malloc(sizeof (Node));
     pN->data = CreateRect(0, 0, w, h);
     Enqueue(q, pN);
-    Enqueue(q, NULL);
+    AddMarker(q);
     return 1;
 }
 
+void AddMarker(Queue* q)
+{
+    Node* null = (Node*) malloc(sizeof (Node));
+    null->data = NULL;
+    Enqueue(q, null);
+}
+
 void AddToList(Rect_List* rect_list, Rect* item){
+    if(rect_list->list == 0)
+    {
+        rect_list->list = malloc(sizeof(Rect*));
+        rect_list->length = 1;
+        rect_list->list[0] = item;
+    }
     if (!(rect_list->list = realloc(rect_list->list, (rect_list->length + 1) * sizeof(Rect*)))) {
         exit(-1);
     }
@@ -194,44 +207,13 @@ void AddToList(Rect_List* rect_list, Rect* item){
     rect_list->list[rect_list->length-1] = item;
 }
 
-// int AddToList2(Rect_List* rect_list, Rect* item){
-
-//     //create new node
-//     Rect* node = (Rect*)malloc(sizeof(Rect));
-
-//     if(node == NULL){
-//         fprintf(stderr, "Unable to allocate memory for new rect\n");
-//         exit(-1);
-//     }
-
-//     node->value = val;
-//     node->next = NULL;  // Change 1
-
-//     //check for first insertion
-//     if(head->next == NULL){
-//         head->next = newNode;
-//         printf("added at beginning\n");
-//     }
-
-//     else
-//     {
-//         //else loop through the list and find the last
-//         //node, insert next to it
-//         node *current = head;
-//         while (true) { // Change 2
-//             if(current->next == NULL)
-//             {
-//                 current->next = newNode;
-//                 printf("added later\n");
-//                 break; // Change 3
-//             }
-//             current = current->next;
-//         };
-//     }
-//     return 0;
-// }
-
 void ClearList(Rect_List* rect_list){
+    int i;
+    for (i = 0; i < rect_list->length; ++i)
+    {
+        free(rect_list->list[i]);
+    }
+    printf("%i",i);
     free(rect_list->list);
     free(rect_list);
 
@@ -347,22 +329,27 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
 Rect_List* Extraction(SDL_Surface* mask){
     Queue* q = ConstructQueue(-1);                                                  //Queue of rectangles to process
     Rect_List* output = malloc(sizeof(Rect_List));                                  //Array of rectangles ready
-    output->list = malloc(sizeof(Rect*));
+    output->list = 0;
+    output->length = 0;
     InitQueue(q, mask->w, mask->h);
     int horizontalPass = 1;                                                         //Define if process do a horizontal pass or not
-
+    int tst = 0;
     while (!isEmpty(q)) {
         Node* pNode = Dequeue(q);
-        if(pNode == NULL && !isEmpty(q)){
+        if(pNode->data == NULL && !isEmpty(q)){
             horizontalPass = !horizontalPass;                                       //Switch between Horizontal Passes & Vertical Passes
-            Enqueue(q, NULL);
+            AddMarker(q);
+            printf("switch\n");
         }
         else{
             Rect* tmp = pNode->data;
             if(tmp->height <= MIN_SIZE_RECT_H || tmp->width <= MIN_SIZE_RECT_W){    //Rectangle is considered finished, is then added to output list
                 AddToList(output, tmp);
+                printf("finish: %i - %i\n", tmp->height, tmp->width);
             } else {                                                                //Rectangle is not finished, apply process another time
                 ExtractionProcess(q, mask, tmp, horizontalPass);
+                printf("process :%i\n", tst);
+                tst++;
             }   
         }
     }
@@ -370,8 +357,14 @@ Rect_List* Extraction(SDL_Surface* mask){
     return output;
 }
 
-void Draw_Rect(SDL_Surface* mask, Rect rect) {
-    Uint32 pixel_color = SDL_MapRGB(mask->format, 0, 0, 255);
+void Draw_Rect(SDL_Surface* mask, Rect rect, int color) {
+    Uint32 pixel_color;
+    if(color)
+        pixel_color = SDL_MapRGB(mask->format, 0, 0, 255);
+    else
+        pixel_color = SDL_MapRGB(mask->format, 0, 200, 20);
+
+
     int x = rect.x, y = rect.y;
     int width = rect.width, height = rect.height;
     for (int i = 0; i < width && (x + i) < mask->w; ++i) {

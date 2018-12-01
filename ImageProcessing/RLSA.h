@@ -40,8 +40,9 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
 Rect_List* Extraction(SDL_Surface* mask);
 Rect_List Init_Rect_List(SDL_Surface* mask);
 Rect_List Create_Rect_List(SDL_Surface* mask);
-void Draw_Rect(SDL_Surface* mask, Rect rect);
+void Draw_Rect(SDL_Surface* mask, Rect rect, int color);
 void ClearList(Rect_List* rect_list);
+void AddMarker(Queue* q);
 
 /*
 Rect_Mask_Couple Get_Rect(SDL_Surface* mask, Rect_List list, int begin, int IsHorizontalPass, int iteration);
