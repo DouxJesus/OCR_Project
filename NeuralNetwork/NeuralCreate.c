@@ -101,6 +101,7 @@ Network CreateNetwork(int* layers, int laylenght)
 	for (int i = 0; i < laylenght; ++i)
 	{
 		int count = layers[i];
+        printf("%i\n", count);
 		if (network.graphlen != 0)
 		{
 			if(!(network.graph = realloc(network.graph, (network.graphlen + count) * sizeof(Neural))))
@@ -203,8 +204,8 @@ void SaveNetwork(Network network)
     		sprintf(str, "%f\n", n.val);
     		fputs(str, file);
 
-    		sprintf(str, "%i\n%i\n", n.plenght, n.slenght);
-    		fputs(str, file);
+    		//sprintf(str, "%i\n%i\n", n.plenght, n.slenght);
+    		//fputs(str, file);
 
 		//listes ajout
     		Tuple* listpredess = n.predes;
@@ -213,19 +214,20 @@ void SaveNetwork(Network network)
     		for (int j = 0; j < n.plenght; ++j)
     		{
     			Tuple t = listpredess[j];
-    			if(j != n.plenght - 1)
+    			//if(j != n.plenght - 1)
     				sprintf(str, "(%i,%f)-", t.pos, t.cost);
-    			else
-    				sprintf(str, "(%i,%f)", t.pos, t.cost);
+    			//else
+    			//	sprintf(str, "(%i,%f)", t.pos, t.cost);
     			fputs(str, file);
     		}
+            fputs("\n", file);
     		for (int k = 0; k < n.slenght; ++k)
     		{
     			Tuple t = listsucess[k];
-    			if(k != n.slenght - 1)
+    			//if(k != n.slenght - 1)
     				sprintf(str, "(%i,%f)-", t.pos, t.cost);
-    			else
-    				sprintf(str, "(%i,%f)", t.pos, t.cost);
+    			//else
+    			//	sprintf(str, "(%i,%f)", t.pos, t.cost);
     			fputs(str, file);
     		}
     		fputs("\n", file);
@@ -258,10 +260,8 @@ Network LoadNetwork()
    			i++;
    			//printf("%c", c);
  		}
-
+        str[i] = '\0';
  		sscanf(str, "%i", &network.laylenght);
-
- 		//str[40] = "0";
  		printf("%i\n", network.laylenght);
 
  		if(!(network.layers = malloc(network.laylenght * sizeof(int))))
@@ -274,20 +274,128 @@ Network LoadNetwork()
  		while((c = fgetc(file)) != '\n' && i < network.laylenght)
  		 {
  		 	int j = 0;
+            str[j] = c;
+            j++;
  		 	while ((c = fgetc(file)) != '-')
    			{
    			//https://www.tutorialspoint.com/c_standard_library/c_function_sscanf.htm
    			//sscanf
-   			//printf("%c", c); cz
    				str[j] = c;
    				j++;
  			}
+            str[j] = '\0';
             int val = 0;
  			sscanf(str, "%i", &val);
  			network.layers[i] = val;
  			printf("%i", network.layers[i]);
  			i++;
  		}
+         printf("\n");
+
+        i = 0;
+         while ((c = fgetc(file)) != '\n')
+        {
+            str[i] = c;
+            i++;
+            //printf("%c", c);
+        }
+        str[i] = '\0';
+        sscanf(str, "%i", &network.graphlen);
+        printf("%i\n", network.graphlen);
+
+        network.graph = malloc(network.graphlen * sizeof(Neural));
+
+        if(!network.graph)
+        {
+            exit(1);
+        }
+
+        i=0;
+        int j = 0;
+         while (j < network.graphlen && (c = fgetc(file)) != '#')
+        {
+            Neural n;
+
+            i = 0;
+            while(c != '\n')
+            {
+               str[i] = c;
+               i++;
+               c = fgetc(file);
+            }
+            str[i] = '\0';
+            sscanf(str, "%lf", &n.val);
+            printf("%f\n", n.val);
+
+            n = CreateNeural(n, n.val);
+
+           /* i = 0;
+            while((c = fgetc(file)) != '\n')
+            {
+               str[i] = c;
+               i++;
+            }
+            str[i] = '\0';
+            sscanf(str, "%i", &n.plenght);
+            //printf("%i\n", n.plenght);
+
+            i = 0;
+            while((c = fgetc(file)) != '\n')
+            {
+               str[i] = c;
+               i++;
+            }
+            str[i] = '\0';
+            sscanf(str, "%i", &n.slenght);
+            //printf("%i\n", n.slenght);*/
+
+            while((c = fgetc(file)) != '\n')
+            {
+                i = 0;
+                str[i] = c;
+                i++;
+                while ((c = fgetc(file)) != '-')
+                {
+                    str[i] = c;
+                    i++;
+                }
+                str[i] = '\0';
+                int pos = 0;
+                double cost = 0;
+                 //printf("ok\n");
+            sscanf(str, "(%i,%lf)", &pos, &cost);
+
+            Tuple t = CreateTuple(pos, cost);
+
+            n = AddPredessesseur(n, t);
+            //printf("%i-%f\n", pos, cost);
+            }
+
+            while((c = fgetc(file)) != '\n')
+            {
+                i = 0;
+                str[i] = c;
+                i++;
+                while ((c = fgetc(file)) != '-')
+                {
+                    str[i] = c;
+                    i++;
+                }
+                str[i] = '\0';
+                int pos = 0;
+                double cost = 0;
+            sscanf(str, "(%i,%le)", &pos, &cost);
+
+            Tuple t = CreateTuple(pos, cost);
+
+            n = AddSuccesseur(n, t);
+            //printf("%i-%f ", pos, cost);
+            }
+
+            printf("%i\n", j);
+            network.graph[j] = n;
+            j++;
+        }
 
  		 while ((c = fgetc(file)) != EOF)
    		{

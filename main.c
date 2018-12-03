@@ -106,22 +106,29 @@ int main(int argc, char** argv) {
        // printf("You need to call ./main with an argument \n");
         //exit(1);
 
-    int* layers;
-        if(!(layers = malloc(4 * sizeof(int))))
-        {
-            exit(-1);
+     int* layers;
+        int laylen = 10;
+        if(!(layers = malloc(laylen * sizeof(int))))
+         {
+             exit(-1);
         }
-    layers[0] = 4;
-    layers[1] = 5;
-    layers[2] = 3;
-    layers[10] = 5;
+     layers[0] = 4;
+     layers[1] = 5;
+     layers[2] = 3;
+     layers[3] = 5;
+     layers[4] = 2;
+     layers[5] = 2;
+     layers[6] = 2;
+     layers[7] = 2;
+     layers[8] = 2;
+     layers[9] = 2;
 
-    int laylen = 4;
-
-    Network net = CreateNetwork(layers, laylen);
+     //Network net = CreateNetwork(layers, laylen);
+     //SaveNetwork(net);
+     //FreeNetwork(net);
+   Network net = LoadNetwork();
     SaveNetwork(net);
-    FreeNetwork(net);
-    LoadNetwork();
+
 }
     return 0;
 }
