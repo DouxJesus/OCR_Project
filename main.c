@@ -28,12 +28,24 @@ void updateStep(SDL_Surface* screen, SDL_Surface* image, char message[], int wai
     }
 }
 
-void DisplayRLSA(Rect_List* rect_list, SDL_Surface* image){
+void DisplayRLSA(Rect_List* rect_list, SDL_Surface* image, int security){
     int i = 0;
+    Rect tmp;
+    printf("=====================================================\n");
+    printf("DISPLAY RLSA : Length to draw - %i\n",rect_list->length );
     while(i < rect_list->length){
-        Draw_Rect(image, *rect_list->list[i], i % 2);
+        //printf("PreDraw : %i\n",i );
+        tmp = *rect_list->list[i];
+        printf("Draw_Rect n°%i : H%i W%i - x%iy%i\n",i,tmp.height, tmp.width, tmp.x, tmp.y);
+        if(security==1 &&(tmp.height >= 0 && tmp.width >=0 && tmp.x >= 0 && tmp.y >= 0) && (tmp.height <= image->h && tmp.width <= image->w && tmp.x <= image->w && tmp.y <= image->h)){
+            Draw_Rect(image, tmp, i % 2);
+        }else {
+            printf("Rect n°%i is NOT valid\n",i);
+        }
+        //printf("LastDraw : %i\n",i );
         i++;
     }
+       
 }
 
 int main(int argc, char** argv) {
@@ -81,13 +93,15 @@ int main(int argc, char** argv) {
         updateStep(screen_surface, image_mask4, "RLSA -- Final Mask", 1);
 
         Rect_List* RLSA_Output = Extraction(image_mask4);
-        DisplayRLSA(RLSA_Output, image_surface);
-        ClearList(RLSA_Output);
+        DisplayRLSA(RLSA_Output, image_surface, 1);
+        
         updateStep(screen_surface, image_surface, "RLSA -- Display", 1);
-        printf("Quitting ...\n");
+        printf("Freeing ...\n");
+        ClearList(RLSA_Output);
         SDL_FreeSurface(image_mask4);
         SDL_FreeSurface(image_surface);
         SDL_FreeSurface(screen_surface);
+        printf("Quitting ...\n");
     } else {
        // printf("You need to call ./main with an argument \n");
         //exit(1);

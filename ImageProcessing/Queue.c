@@ -35,6 +35,7 @@ int Enqueue(Queue *q, Node *item) {
         return 0;
     }
     /*the queue is empty*/
+    //printf("Enqueue : h%i w%i\n",item->data->x, item->data->y);
     item->prev = NULL;
     if (q->size == 0) {
         q->head = item;

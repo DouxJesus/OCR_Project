@@ -7,8 +7,6 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 
-#define MIN_SIZE_RECT_W 64
-#define MIN_SIZE_RECT_H 128
 
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 	if( img->flags & SDL_SRCCOLORKEY ) {
@@ -199,21 +197,22 @@ void AddToList(Rect_List* rect_list, Rect* item){
         rect_list->list = malloc(sizeof(Rect*));
         rect_list->length = 1;
         rect_list->list[0] = item;
-    }
-    if (!(rect_list->list = realloc(rect_list->list, (rect_list->length + 1) * sizeof(Rect*)))) {
+    } else if (!(rect_list->list = realloc(rect_list->list, (rect_list->length + 1) * sizeof(Rect*)))) {
         exit(-1);
+    } else {
+        rect_list->length++;
+        rect_list->list[rect_list->length-1] = item;
     }
-    rect_list->length = rect_list->length + 1;
-    rect_list->list[rect_list->length-1] = item;
 }
 
 void ClearList(Rect_List* rect_list){
     int i;
     for (i = 0; i < rect_list->length; ++i)
     {
+        printf("Free n°%i\n",i);
         free(rect_list->list[i]);
     }
-    printf("%i",i);
+    
     free(rect_list->list);
     free(rect_list);
 
@@ -230,24 +229,28 @@ Rect* CreateRect(int x, int y, int width, int height)
 }
 
 
-void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizontal){
-    int rect_x = rectangle->x, rect_y = rectangle->y;           //coordinate of point up-left of the rectangle
+//Return 0 if process could not do better
+//Return 1 if process was succesful
+int ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizontal){
+    int rect_x = rectangle->x, rect_y = rectangle->y;           //Coordinates of top-left corner of the rectangle given in parameters
     int relative_rect_width = rectangle->width;
-    int relative_rect_height = rectangle->height;              //relative length of the rectangle
+    int relative_rect_height = rectangle->height;               //Relatives lengths of the rectangle
     int rect_width = relative_rect_width + rectangle->x;
-    int rect_height = relative_rect_height + rectangle->y;     //where the rectangle actually ends
+    int rect_height = relative_rect_height + rectangle->y;      //Height & Width of the rectangle of the rectangle
     int first_x = 0, first_y = 0;
-
     int isWhiteLine = 1;
     int wasWhiteLine = 1;
 
-    if(horizontal){
+    int succesful = 0;                                          //Define if the function was succesful or not
+
+    //printf("Process data : %i %i %i %i\n",rect_x,rect_y,  );
+    if(horizontal >0){
         wasWhiteLine = 1;
-        for(int j = rect_y; j < rect_height; j++){
+        int j;
+        for(j = rect_y; j < rect_height; j++){
+            //printf("Boucle H: %i - %i\n",first_y, j );
             isWhiteLine = 1; 
             int i = rect_x;
-            //IDEA : THRESHOLD GIVEN IN PARAM or CONST
-            //Work here
             while(isWhiteLine == 1 && i < rect_width){      //Check isWhiteLine
                 Uint32 pixel = get_pixel(mask, i, j);
                 Uint8 r, g, b;
@@ -260,29 +263,41 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
             if (isWhiteLine){                              //if line IS a white line
                 if (!wasWhiteLine){                        //End of bloc  --- Was = 1, Is = 0
                     Node *pN = (Node*) malloc(sizeof(Node));
-                    pN->data = CreateRect(rect_x, first_y + rect_y, relative_rect_width, j - first_y);
+                    
+                    if(first_y > j){
+                        printf("PROCESS1: firsty : %i, j :%i -- x%i y%i - W%i H%i\n", first_y, j,rect_x, first_y, relative_rect_width, j - first_y);
+                    }
+                    pN->data = CreateRect(rect_x, first_y, relative_rect_width, j - first_y);
                     Enqueue(q, pN);
+                    succesful=1;
                 }
-                    wasWhiteLine = 1;
-            } else {
+                wasWhiteLine = 1;
+            } else {                                        //if line IS NOT a white line
                 if(wasWhiteLine){                           //Beginning of bloc --- Was = 0, Is = 1
                     first_y = j;
                 }
                 wasWhiteLine = 0;
             }
         }
-        if (!wasWhiteLine && rect_height > 0) {             //End of last possible bloc
+        if (!wasWhiteLine ) {             //End of last possible bloc
             Node *pN = (Node*) malloc(sizeof (Node));
-            pN->data =  CreateRect(rect_x, first_y + rect_y, relative_rect_width, relative_rect_height - first_y);
+            //printf("PROCESS2 %i: x%i y%i - W%i H%i\n", horizontal, rect_x, first_y, relative_rect_width, relative_rect_height - first_y);
+            //printf("PROCESS2: firsty : %i, j :%i R_Rect_H : %i -- x%i y%i - W%i H%i\n", first_y, j, relative_rect_height, rect_x, first_y, relative_rect_width, j - first_y);
+            if(first_y > j){
+                printf("PROCESS2: firsty : %i, j :%i R_Rect_H : %i -- x%i y%i - W%i H%i\n", first_y, j, relative_rect_height, rect_x, first_y, relative_rect_width, j - first_y);
+            }
+            pN->data =  CreateRect(rect_x, first_y, relative_rect_width, relative_rect_height - first_y);
             Enqueue(q, pN);
+            succesful=1;
         }
+        return succesful;
     } else {    //Vertical pass
         wasWhiteLine = 1;
-        for (int i = rect_x; i < rect_width; i++){
+        int i;
+        for (i = rect_x; i < rect_width; i++){
+            //printf("Boucle  V: %i - %i\n",first_y, i);
             isWhiteLine = 1;
             int j = rect_y;
-            //IDEA : THRESHOLD GIVEN IN PARAM or CONST
-            //Work here
             while(isWhiteLine == 1 && j < rect_height){         //Check Whiteline
                 Uint32 pixel = get_pixel(mask, i, j);
                 Uint8 r, g, b;
@@ -295,24 +310,36 @@ void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizo
             if (isWhiteLine){                                   //if line IS a white line
                 if (!wasWhiteLine){                             //Previous line was a BLACK line,
                     Node *pN = (Node*) malloc(sizeof (Node));
-                    pN->data = CreateRect(first_x + rect_x, rect_y, i - first_x, relative_rect_height);
+                    //printf("PROCESS3 %i: x%i y%i - W%i H%i\n", horizontal, first_x, rect_y, i - first_x, relative_rect_height);
+                    if(first_x > i){
+                        printf("PROCESS3 : firstx : %i, i :%i%i: x%i y%i - W%i H%i\n", first_x, i, first_x, rect_y, i - first_x, relative_rect_height);
+                    }
+                    pN->data = CreateRect(first_x, rect_y, i - first_x, relative_rect_height);
                     Enqueue(q, pN);
+                    succesful=1;
                 }
-                wasWhiteLine = 1; //true
+                wasWhiteLine = 1;
             } else {
                 if(wasWhiteLine){                           //Line is not WHITE, is BLACK, previous one was -> New Rectangle
-                    first_y = j;
+                    first_x = i;
                 }
-                wasWhiteLine = 0; //false
+                wasWhiteLine = 0;
             }
         }
-        if (!wasWhiteLine && rect_height > 0) { //la ligne précédente n'est pas blanche, on peut faire un bloc
+        if (!wasWhiteLine ) { //la ligne précédente n'est pas blanche, on peut faire un bloc
             Node *pN = (Node*) malloc(sizeof (Node));
-            pN->data = CreateRect(first_x + rect_x, rect_y, relative_rect_width - first_x, relative_rect_height);
+            //printf("\nPROCESS4 %i: x%i y%i - W%i H%i\n", horizontal, first_x, rect_y, relative_rect_width - first_x, relative_rect_height);
+            if(first_x > i){
+                printf("PROCESS3 : firstx : %i, i :%i%i: x%i y%i - W%i H%i\n", first_x, i, first_x, rect_y, i - first_x, relative_rect_height);
+            }
+            pN->data = CreateRect(first_x, rect_y, relative_rect_width - first_x, relative_rect_height);
             Enqueue(q, pN);
+            succesful=1;
             
         }
+        return succesful;
     }
+    return succesful;
 }
     
 //Function to extract the rectangles from the images with the mask given
@@ -323,29 +350,43 @@ Rect_List* Extraction(SDL_Surface* mask){
     output->length = 0;
     InitQueue(q, mask->w, mask->h);
     int horizontalPass = -1;   //1 is horizontal, -1 is vertical                                              //Define if process do a horizontal pass or not
-    int tst = 0;
-    while (!isEmpty(q)) {
+    int processCount = 0, switchCount = 0, AddToListCount = 0;
+    int endCase = 0;           //1 is sucess, 0 is not sucessful
+     while (!isEmpty(q)) {
+    //while(switchCount < 2){
         Node* pNode = Dequeue(q);
         if(pNode->data == NULL && !isEmpty(q)){
             horizontalPass = -horizontalPass;                                 //Switch between Horizontal Passes & Vertical Passes
             AddMarker(q);
-            printf("switch\n");
+            switchCount++;
+            if(horizontalPass > 0){
+                //printf("Switch n°%i : to Horizontal\n",switchCount);
+            } else {
+                //printf("Switch n°%i : to Vertical\n",switchCount);
+            }
+            
         }
         else{
+            endCase = 0;
             Rect* tmp = pNode->data;
-            printf("Node : H%i W%i - x%iy%i", tmp->height, tmp->width, tmp->x, tmp->y);
-            printf(" - Still in queue : %i\n", q->size);
-            if(tmp->height <= MIN_SIZE_RECT_H || tmp->width <= MIN_SIZE_RECT_W){    //Rectangle is considered finished, is then added to output list
+            printf("Node : H%i W%i - x%iy%i - ", tmp->height, tmp->width, tmp->x, tmp->y);
+            printf("Process n°%i \n", processCount);
+            //printf(" - Still in queue : %i - ", q->size);                                                               //Rectangle is not finished, apply process another time
+            endCase = ExtractionProcess(q, mask, tmp, horizontalPass);
+            processCount++;
+            
+            if(endCase >= 0){
                 AddToList(output, tmp);
-                
-            } else {                                                                //Rectangle is not finished, apply process another time
-                ExtractionProcess(q, mask, tmp, horizontalPass);
-                printf("process :%i\n", tst);
-                tst++;
-            }   
+                AddToListCount++;
+                //printf(" - AddToList n°%i\n",AddToListCount);   
+            }  
+            else {
+                printf("\n");
+            }
         }
     }
-    DestructQueue(q);                                                               //Extraction is finished, free queue
+    DestructQueue(q);                                                      //Extraction is finished, free queue
+    printf("Extraction completed - Bloc extracted : %i - Number of switch : %i\n", AddToListCount, switchCount);
     return output;
 }
 
@@ -359,6 +400,10 @@ void Draw_Rect(SDL_Surface* mask, Rect rect, int color) {
 
     int x = rect.x, y = rect.y;
     int width = rect.width, height = rect.height;
+    if(x > mask->w || y > mask->h || width > mask->w || height > mask->h){
+        printf("DrawRect :  INVALID RECT\n");
+        exit(-1);
+    }
     for (int i = 0; i < width && (x + i) < mask->w; ++i) {
             put_pixel(mask, x + i, y, pixel_color);
             if (height + y != 0)
