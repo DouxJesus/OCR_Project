@@ -64,7 +64,7 @@ int isEmpty(Queue* q) {
     if (q == NULL) {
         return 0;
     }
-    if (q->size == 0) {
+    if (q->size == 1) {
         return 1;
     } else {
         return 0;
