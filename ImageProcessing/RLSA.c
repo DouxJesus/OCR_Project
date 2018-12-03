@@ -246,9 +246,9 @@ int ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizon
     //printf("Process data : %i %i %i %i\n",rect_x,rect_y,  );
     if(horizontal >0){
         wasWhiteLine = 1;
-        int j;
+        int j = 0;
         for(j = rect_y; j < rect_height; j++){
-            //printf("Boucle H: %i - %i\n",first_y, j );
+            //printf("PROCESS1: firsty : %i, j :%i \n", first_y, j);
             isWhiteLine = 1; 
             int i = rect_x;
             while(isWhiteLine == 1 && i < rect_width){      //Check isWhiteLine
@@ -263,10 +263,7 @@ int ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizon
             if (isWhiteLine){                              //if line IS a white line
                 if (!wasWhiteLine){                        //End of bloc  --- Was = 1, Is = 0
                     Node *pN = (Node*) malloc(sizeof(Node));
-                    
-                    if(first_y > j){
-                        printf("PROCESS1: firsty : %i, j :%i -- x%i y%i - W%i H%i\n", first_y, j,rect_x, first_y, relative_rect_width, j - first_y);
-                    }
+                    printf("P1 : rect_x:%i - first_y:%i - relative_rect_width:%i - j: %i - first_y:%i\nOUTPUT:%i\n",rect_x, first_y, relative_rect_width, j, first_y,j - first_y);
                     pN->data = CreateRect(rect_x, first_y, relative_rect_width, j - first_y);
                     Enqueue(q, pN);
                     succesful=1;
@@ -279,23 +276,21 @@ int ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizon
                 wasWhiteLine = 0;
             }
         }
+        //printf("PROCESS2: firsty : %i, j :%i \n", first_y, j);
         if (!wasWhiteLine ) {             //End of last possible bloc
             Node *pN = (Node*) malloc(sizeof (Node));
             //printf("PROCESS2 %i: x%i y%i - W%i H%i\n", horizontal, rect_x, first_y, relative_rect_width, relative_rect_height - first_y);
             //printf("PROCESS2: firsty : %i, j :%i R_Rect_H : %i -- x%i y%i - W%i H%i\n", first_y, j, relative_rect_height, rect_x, first_y, relative_rect_width, j - first_y);
-            if(first_y > j){
-                printf("PROCESS2: firsty : %i, j :%i R_Rect_H : %i -- x%i y%i - W%i H%i\n", first_y, j, relative_rect_height, rect_x, first_y, relative_rect_width, j - first_y);
-            }
-            pN->data =  CreateRect(rect_x, first_y, relative_rect_width, relative_rect_height - first_y);
+            printf("P2 : rect_x:%i - first_y:%i - relative_rect_width:%i - relative_rect_height: %i - first_y:%i\nOUTPUT:%i\n", rect_x, first_y, relative_rect_width, relative_rect_height, first_y,  relative_rect_height - first_y);
+            pN->data =  CreateRect(rect_x, first_y, relative_rect_width, rect_height - first_y);
             Enqueue(q, pN);
             succesful=1;
         }
         return succesful;
     } else {    //Vertical pass
         wasWhiteLine = 1;
-        int i;
+        int i = 0;
         for (i = rect_x; i < rect_width; i++){
-            //printf("Boucle  V: %i - %i\n",first_y, i);
             isWhiteLine = 1;
             int j = rect_y;
             while(isWhiteLine == 1 && j < rect_height){         //Check Whiteline
@@ -311,9 +306,7 @@ int ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizon
                 if (!wasWhiteLine){                             //Previous line was a BLACK line,
                     Node *pN = (Node*) malloc(sizeof (Node));
                     //printf("PROCESS3 %i: x%i y%i - W%i H%i\n", horizontal, first_x, rect_y, i - first_x, relative_rect_height);
-                    if(first_x > i){
-                        printf("PROCESS3 : firstx : %i, i :%i%i: x%i y%i - W%i H%i\n", first_x, i, first_x, rect_y, i - first_x, relative_rect_height);
-                    }
+                    printf("P3 : first_x:%i - rect_y:%i - i:%i - firstx: %i - relative_rect_height:%i\nOUTPUT:%i\n",first_x, rect_y, i,first_x, relative_rect_height,i - first_x);
                     pN->data = CreateRect(first_x, rect_y, i - first_x, relative_rect_height);
                     Enqueue(q, pN);
                     succesful=1;
@@ -329,10 +322,8 @@ int ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizon
         if (!wasWhiteLine ) { //la ligne précédente n'est pas blanche, on peut faire un bloc
             Node *pN = (Node*) malloc(sizeof (Node));
             //printf("\nPROCESS4 %i: x%i y%i - W%i H%i\n", horizontal, first_x, rect_y, relative_rect_width - first_x, relative_rect_height);
-            if(first_x > i){
-                printf("PROCESS3 : firstx : %i, i :%i%i: x%i y%i - W%i H%i\n", first_x, i, first_x, rect_y, i - first_x, relative_rect_height);
-            }
-            pN->data = CreateRect(first_x, rect_y, relative_rect_width - first_x, relative_rect_height);
+            printf("P4 : first_x:%i - rect_y:%i - relative_rect_width:%i - firstx: %i - relative_rect_height:%i\nOUTPUT:%i\n",first_x, rect_y, relative_rect_width,first_x, relative_rect_height, relative_rect_width - first_x);
+            pN->data = CreateRect(first_x, rect_y, rect_width - first_x, relative_rect_height);
             Enqueue(q, pN);
             succesful=1;
             
@@ -352,8 +343,8 @@ Rect_List* Extraction(SDL_Surface* mask){
     int horizontalPass = -1;   //1 is horizontal, -1 is vertical                                              //Define if process do a horizontal pass or not
     int processCount = 0, switchCount = 0, AddToListCount = 0;
     int endCase = 0;           //1 is sucess, 0 is not sucessful
-     while (!isEmpty(q)) {
-    //while(switchCount < 2){
+    //while (!isEmpty(q)) {
+    while(switchCount <= 10){
         Node* pNode = Dequeue(q);
         if(pNode->data == NULL && !isEmpty(q)){
             horizontalPass = -horizontalPass;                                 //Switch between Horizontal Passes & Vertical Passes
@@ -375,7 +366,8 @@ Rect_List* Extraction(SDL_Surface* mask){
             endCase = ExtractionProcess(q, mask, tmp, horizontalPass);
             processCount++;
             
-            if(endCase >= 0){
+            //if(endCase >= 0){
+            if(switchCount == 3){  
                 AddToList(output, tmp);
                 AddToListCount++;
                 //printf(" - AddToList n°%i\n",AddToListCount);   
