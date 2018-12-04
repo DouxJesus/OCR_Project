@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <gtk/gtk.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "ImageProcessing/BlackAndWhite.h"
@@ -7,6 +9,7 @@
 #include "Image_BMP/BMP.h"
 #include "ImageProcessing/RLSA.h"
 #include "NeuralNetwork/NeuralCreate.h"
+#include "Interface/interface.c"
 
 void updateStep(SDL_Surface* screen, SDL_Surface* image, char message[], int wait){
     update_surface(screen, image);
@@ -92,7 +95,7 @@ int main(int argc, char** argv) {
        // printf("You need to call ./main with an argument \n");
         //exit(1);
 
-     int* layers;
+    /* int* layers;
         int laylen = 10;
         if(!(layers = malloc(laylen * sizeof(int))))
          {
@@ -112,8 +115,12 @@ int main(int argc, char** argv) {
      //Network net = CreateNetwork(layers, laylen);
      //SaveNetwork(net);
      //FreeNetwork(net);
-   Network net = LoadNetwork();
-    SaveNetwork(net);
+    Network net = LoadNetwork();
+    SaveNetwork(net);*/
+    gtk_init(&argc, &argv);
+    GtkWidget * MainWindow = NULL;
+    MainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_widget_show(MainWindow);
 
 }
     return 0;
