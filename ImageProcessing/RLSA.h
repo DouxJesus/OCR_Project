@@ -36,7 +36,7 @@ SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output);
 int InitQueue(Queue* q, int w, int h);
 void AddToList(Rect_List* list, Rect* item);
 Rect* CreateRect(int x, int y, int width, int height);
-void ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizontal);
+int ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizontal);
 Rect_List* Extraction(SDL_Surface* mask);
 Rect_List Init_Rect_List(SDL_Surface* mask);
 Rect_List Create_Rect_List(SDL_Surface* mask);

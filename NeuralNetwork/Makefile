@@ -4,7 +4,7 @@
 CC=gcc
 
 CPPFLAGS= 
-CFLAGS=-Wall -Wextra -Werror -std=c99 -O3
+CFLAGS=-Wall -Wextra -std=c99 -O3
 LDFLAGS=
 EXEC=main
 SRC= NeuralTrain.c NeuralCreate.c
