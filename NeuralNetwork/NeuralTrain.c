@@ -190,7 +190,7 @@ char readResult(Network network, int numberCharacters)
 
 void train(Network network, double** exercices, double** targets, int numberCharacters)
 {
-    for(int k = 0; k < 10000; k++)
+    for(int k = 0; k < 1000; k++)
     {
         printf("####################################\n");
         for(int j = 0; j < numberCharacters; j++)

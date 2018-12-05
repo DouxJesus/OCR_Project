@@ -99,10 +99,13 @@ Network CreateNetwork(int* layers, int laylenght)
 	network.graphlen = 0;
 
 	int index = 0;
+    int index_success = 0;
+    int index_predes = 0;
 
 	for (int i = 0; i < laylenght; ++i)
 	{
 		int count = layers[i];
+        index_success += count;
         printf("%i\n", count);
 		if (network.graphlen != 0)
 		{
@@ -136,8 +139,8 @@ Network CreateNetwork(int* layers, int laylenght)
 				int countpredes = layers[i - 1];
 				for (int l = 0; l < countpredes; ++l)
 				{
-					randbl = frand_a_b(0, 1);
-					Tuple t = CreateTuple(index + l, randbl);
+					randbl = frand_a_b(-10, 10);
+					Tuple t = CreateTuple(index_predes + l, randbl);
 					n = AddPredessesseur(n, t);
 				}
 			}
@@ -147,13 +150,18 @@ Network CreateNetwork(int* layers, int laylenght)
 				int countsucess = layers[i + 1];
 				for (int k = 0; k < countsucess; ++k)
 				{
-					randbl = frand_a_b(0, 1);
-					Tuple t = CreateTuple(index + k, randbl);
+					randbl = frand_a_b(-10, 10);
+					Tuple t = CreateTuple(index_success + k, randbl);
 					n = AddSuccesseur(n, t);
 				}
 			}
 			network.graph[index + j] = n;
 		}
+
+        if (i != 0)
+        {
+            index_predes += layers[i - 1];
+        }
 		index += count;
 
 	}
