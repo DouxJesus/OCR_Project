@@ -4,7 +4,8 @@
 
 Neural CreateNeural(Neural n, double val)
 {
-	n.val = val;;
+	n.val = val;
+    n.error = 0;
 	n.predes = 0;
 	n.sucess = 0;
 	n.plenght = 0;
@@ -17,6 +18,7 @@ Neural CreateCompleteNeural(double val, Tuple* predes, Tuple* sucess, int plen, 
 {
 	Neural n;
 	n.val = val;;
+    n.error = 0;
 	n.predes = predes;
 	n.sucess = sucess;
 	n.plenght = plen;
@@ -139,7 +141,6 @@ Network CreateNetwork(int* layers, int laylenght)
 					n = AddPredessesseur(n, t);
 				}
 			}
-
 
 			if(i < laylenght - 1)
 			{
@@ -328,26 +329,6 @@ Network LoadNetwork()
             printf("%f\n", n.val);
 
             n = CreateNeural(n, n.val);
-
-           /* i = 0;
-            while((c = fgetc(file)) != '\n')
-            {
-               str[i] = c;
-               i++;
-            }
-            str[i] = '\0';
-            sscanf(str, "%i", &n.plenght);
-            //printf("%i\n", n.plenght);
-
-            i = 0;
-            while((c = fgetc(file)) != '\n')
-            {
-               str[i] = c;
-               i++;
-            }
-            str[i] = '\0';
-            sscanf(str, "%i", &n.slenght);
-            //printf("%i\n", n.slenght);*/
 
             while((c = fgetc(file)) != '\n')
             {

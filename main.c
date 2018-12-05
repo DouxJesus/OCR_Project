@@ -9,7 +9,7 @@
 #include "Image_BMP/BMP.h"
 #include "ImageProcessing/RLSA.h"
 #include "NeuralNetwork/NeuralCreate.h"
-#include "Interface/interface.c"
+//#include "Interface/interface.c"
 
 void updateStep(SDL_Surface* screen, SDL_Surface* image, char message[], int wait){
     update_surface(screen, image);
@@ -106,36 +106,6 @@ int main(int argc, char** argv) {
         SDL_FreeSurface(screen_surface);
         printf("Quitting ...\n");
     } else {
-       // printf("You need to call ./main with an argument \n");
-        //exit(1);
-
-    /* int* layers;
-        int laylen = 10;
-        if(!(layers = malloc(laylen * sizeof(int))))
-         {
-             exit(-1);
-        }
-     layers[0] = 4;
-     layers[1] = 5;
-     layers[2] = 3;
-     layers[3] = 5;
-     layers[4] = 2;
-     layers[5] = 2;
-     layers[6] = 2;
-     layers[7] = 2;
-     layers[8] = 2;
-     layers[9] = 2;
-
-     //Network net = CreateNetwork(layers, laylen);
-     //SaveNetwork(net);
-     //FreeNetwork(net);
-    Network net = LoadNetwork();
-    SaveNetwork(net);*/
-    gtk_init(&argc, &argv);
-    GtkWidget * MainWindow = NULL;
-    MainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_widget_show(MainWindow);
-
 }
     return 0;
 }
