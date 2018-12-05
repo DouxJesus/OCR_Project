@@ -7,7 +7,9 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 
-#define EXTRACTION_NUM_OF_PASSES 10
+#define EXTRACTION_NUM_OF_PASSES 5
+#define MATRIX_HEIGHT 32
+#define MATRIX_WIDTH 32
 
 //==================================================TOOLBOX=================================================================
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
@@ -20,16 +22,15 @@ SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask){
 }
 
 //Initialise the queue given in parameter, by enqueuing the first rectangle, which is the size of the image
-int InitQueue(Queue* q, int w, int h){
+int InitQueue(Queue* q, int x, int y, int w, int h){
     Node* pN = (Node*) malloc(sizeof (Node));
-    pN->data = CreateRect(0, 0, w, h);
+    pN->data = CreateRect(x, y, w, h);
     Enqueue(q, pN);
     AddMarker(q);
     return 1;
 }
 
-void AddMarker(Queue* q)
-{
+void AddMarker(Queue* q){
     Node* null = (Node*) malloc(sizeof (Node));
     null->data = NULL;
     Enqueue(q, null);
@@ -63,12 +64,9 @@ void ClearList(Rect_List* rect_list, int prints){
     free(rect_list);
     if(prints)
         printf("Free completed\n=========================================================\n");
-
-
 }
 
-Rect* CreateRect(int x, int y, int width, int height)
-{
+Rect* CreateRect(int x, int y, int width, int height){
     Rect* rect = (Rect*) malloc(sizeof(Rect));
     rect->x = x;
     rect->y = y;
@@ -80,9 +78,9 @@ Rect* CreateRect(int x, int y, int width, int height)
 void Draw_Rect(SDL_Surface* mask, Rect rect, int color) {
     Uint32 pixel_color;
     if(color)
-        pixel_color = SDL_MapRGB(mask->format, 0, 0, 255);
+        pixel_color = SDL_MapRGB(mask->format, 229, 4, 60);
     else
-        pixel_color = SDL_MapRGB(mask->format, 0, 200, 20);
+        pixel_color = SDL_MapRGB(mask->format, 4, 56, 244);
     int x = rect.x, y = rect.y;
     int width = rect.width, height = rect.height;
     if(x > mask->w || y > mask->h || width > mask->w || height > mask->h){
@@ -352,12 +350,17 @@ int ExtractionProcess(Queue* q, SDL_Surface *mask, Rect * rectangle, int horizon
 //Param:mask - SDL Surface which from we extract the rectangles
 //Param:prints - bool for debug purposes
 //Param:levelOfPrints - int to define which prints to do. Lvl 1 is basic prints, with important information, lvl 2 is slightly more complete, with much more data printed
-Rect_List* Extraction(SDL_Surface* mask, int prints, int levelOfPrints){
+Rect_List* Extraction(SDL_Surface* mask, int rectMode, Rect* rect, int prints, int levelOfPrints){
     Queue* q = ConstructQueue(-1);                                                  //Queue of rectangles to process
     Rect_List* output = malloc(sizeof(Rect_List));                                  //Array of rectangles ready
     output->list = 0;
     output->length = 0;
-    InitQueue(q, mask->w, mask->h);
+    if(rectMode == 0 && rect == NULL){
+        InitQueue(q, 0, 0, mask->w, mask->h);
+    }
+    else{
+        InitQueue(q, rect->x, rect->y, rect->width, rect->height);
+    }
     int horizontalPass = -1;                                                        //1 is horizontal, -1 is vertical -- Define if process do a horizontal pass or not
     int processCount = 0, switchCount = 0, AddToListCount = 0;
     int endCase = 0;
@@ -394,6 +397,9 @@ Rect_List* Extraction(SDL_Surface* mask, int prints, int levelOfPrints){
         }
     }
     DestructQueue(q);                                                   //Extraction is finished, free queue
+    if(rectMode){
+        free(rect);
+    }  
     if(prints && levelOfPrints >=1)                                     //For debug purposes
         printf("Extraction completed - Bloc extracted : %i - Number of switch : %i\n", AddToListCount, switchCount);
     return output;
@@ -447,47 +453,13 @@ SDL_Surface* resizeImage(SDL_Surface* src, SDL_Surface* output, int r_width, int
     return output;
 }
 
-void swap(double *a, double *b)
-{
+void swap(double *a, double *b){
     double tmp = *a;
     *a = *b;
     *b = tmp;
 }
 
-Matrix_Rect* resizeImage3(Matrix_Rect* src, int r_width, int r_height){    
-    int srcWidth = src->width;
-    int srcHeight = src->height;
-    double* matrix = src->matrix;
-    //double scalex = r_width / srcWidth;
-    //double scaley = r_height / srcHeight;
-    int newWidth = r_width;
-    int newHeight= r_height;
-    int x, y;
-    double* new_matrix = calloc(((newWidth * newHeight)) , sizeof(double)); 
-    for(x= 0;x < newWidth; x++){
-        for (y = 0; y < newHeight; y++){
 
-            double gx = x / (double)(newWidth) * (src->width-1);
-            double gy = y / (double)(newHeight) * (src->height-1);
-            int gxi = (int)gx;
-            int gyi = (int)gy;
-            Uint32 result = 0;
-            double pix00 = (matrix[gxi * srcHeight + gyi] > 0) ?1 : 0;
-            double pix01 = (matrix[gxi+1 * srcHeight + gyi] > 0) ? 1 : 0;
-            double pix10 = (matrix[gxi * srcHeight + gyi + 1] > 0) ? 1 : 0;
-            double pix11 = (matrix[gxi+1 * srcHeight + gyi + 1] > 0) ? 1 : 0;
-            Uint8  i;
-            for(i = 0; i < 3; i++){
-                //((uint8_t*)&result)[i] = blerp( ((uint8_t*)&c00)[i], ((uint8_t*)&c10)[i], ((uint8_t*)&c01)[i], ((uint8_t*)&c11)[i], gxi - gx, gyi - gy); // this is shady
-                result |= (Uint8)blerp(pix00 , pix10 , pix01 , pix11 , gx - gxi, gy -gyi) << (8*i);
-            }
-            new_matrix[x * newHeight + y] = result;
-        }
-    }
-    swap(src->matrix, new_matrix);
-    free(new_matrix);
-    return src;
-}
 
 
 
@@ -510,63 +482,14 @@ void DisplayRLSA(Rect_List* rect_list, SDL_Surface* image, int prints){
         }
         //printf("LastDraw : %i\n",i );
         i++;
-    }
-       
+    }      
 }
 
-// void print_matrix(char s[], double m[], size_t rows, size_t cols)
-// {
-//     printf("%s =\n",s);
-//     for (size_t i = 0; i < rows; ++i)
-//     {
-
-//         for (size_t j = 0; j < cols; ++j)
-//         {
-//             printf("%4g",m[i * cols + j] );
-//         }
-//         printf("\n");
-//     }
-// }
-
-void AddToList2(Word_List* word_list, Word* item){
-    if(word_list->list == 0)
-    {
-        word_list->list = malloc(sizeof(Word*));
-        word_list->length = 1;
-        word_list->list[0] = item;
-    } else if (!(word_list->list = realloc(word_list->list, (word_list->length + 1) * sizeof(Word*)))) {
-        exit(-1);
-    } else {
-        word_list->length++;
-        word_list->list[word_list->length-1] = item;
-    }
-}
-
-
-Word_List* ExtractWordList(SDL_Surface* image, Rect_List* WordList){
-    Word_List* word_list = (Word_List *) malloc(sizeof (Word_List));
-    int i = 0;
-    while(i < WordList->length){
-        Rect* tmp = WordList->list[i];
-        Word* word_tmp = (Word*) malloc(sizeof (Word));
-        word_tmp->x = tmp->x;
-        word_tmp->y = tmp->y;
-        word_tmp->length = 0;
-        //=============================
-
-
-        //=============================
-        AddToList2(word_list, word_tmp);
-        i++;
-    }
-    return word_list;
-}
 Matrix_Rect_List* Matrixize(SDL_Surface* image, Rect_List* rect_list){
     Matrix_Rect_List* output = malloc(sizeof (Matrix_Rect_List));
     output->list_matrix = (Matrix_Rect** ) malloc(rect_list->length * sizeof (Matrix_Rect*));
     output->length = 0;
-    for (int i = 0; i < rect_list->length; i++)
-    {
+    for (int i = 0; i < rect_list->length; i++){
         Matrix_Rect* matrix_tmp = malloc(sizeof (Matrix_Rect));
 
         Rect* tmp = rect_list->list[i];
@@ -597,11 +520,176 @@ Matrix_Rect_List* Matrixize(SDL_Surface* image, Rect_List* rect_list){
         output->list_matrix[i] = matrix_tmp;
         output->length++;
     }
-    
     printf("Matrixize - len_rect : %i - len_matrix : %i", rect_list->length, output->length);
     free(rect_list);
     return output;
 }
+
+
+//Resize the given matrix at the given width and height, by applying a billineral interpolation
+Matrix_Rect* resizeMatrix(Matrix_Rect* src, int r_width, int r_height){    
+    int srcWidth = src->width;
+    int srcHeight = src->height;
+    double* matrix = src->matrix;
+    //double scalex = r_width / srcWidth;
+    //double scaley = r_height / srcHeight;
+    int newWidth = r_width;
+    int newHeight= r_height;
+    int x, y;
+    double* new_matrix = calloc(((newWidth * newHeight)) , sizeof(double)); 
+    for(x= 0;x < newWidth; x++){
+        for (y = 0; y < newHeight; y++){
+            double gx = x / (double)(newWidth) * (src->width-1);
+            double gy = y / (double)(newHeight) * (src->height-1);
+            int gxi = (int)gx;
+            int gyi = (int)gy;
+            Uint32 result = 0;
+            double pix00 = (matrix[gxi * srcHeight + gyi] > 0) ?1 : 0;
+            double pix01 = (matrix[gxi+1 * srcHeight + gyi] > 0) ? 1 : 0;
+            double pix10 = (matrix[gxi * srcHeight + gyi + 1] > 0) ? 1 : 0;
+            double pix11 = (matrix[gxi+1 * srcHeight + gyi + 1] > 0) ? 1 : 0;
+            Uint8  i;
+            for(i = 0; i < 3; i++){
+                result |= (Uint8)blerp(pix00 , pix10 , pix01 , pix11 , gx - gxi, gy -gyi) << (8*i);
+            }
+            new_matrix[x * newHeight + y] = result;
+        }
+    }
+    swap(src->matrix, new_matrix);
+    free(new_matrix);
+    return src;
+}
+
+Matrix_Rect* Matrixize2(SDL_Surface* image, Rect* rect){
+    int r_x = rect->x;
+    int r_y = rect->y;
+    int r_w = rect->width;
+    int r_h = rect->height;
+    free(rect);
+    Matrix_Rect* output = malloc(sizeof (Matrix_Rect));
+    output->matrix = calloc(((r_w * r_h)) , sizeof(double));
+    output->height = r_h;
+    output->width = r_w;
+    output->x = r_x;
+    output->y = r_y; 
+    int len = 0;
+    for(int x = r_x, m_x = 0; x < r_x + r_w; x++, m_x++){
+        for(int y = r_y, m_y = 0; y < r_y + r_h; y++, m_y++){
+            //printf("x%i y%i\n",x,y );
+            double pix = 0;
+            Uint32 pixel = get_pixel(image, x, y);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image->format, &r, &g, &b);
+            if(b < 127){                                //pix == 1 -> pixel is black on the image
+                pix = 1;
+            }
+            output->matrix[m_x * r_h + m_y] = pix;
+            len++;
+        }
+    }   
+    //printf("Matrixize - len_rect : %i - len_matrix : %i\n", (rect->width)*(rect->height), len);
+    return output;
+}
+
+
+
+//Resize the given matrix at the given width and height, by applying a billineral interpolation
+double* resizeMatrix2(Matrix_Rect* src, int r_width, int r_height){    
+    int srcWidth = src->width;
+    int srcHeight = src->height;
+    double* matrix = src->matrix;
+    //double scalex = r_width / srcWidth;
+    //double scaley = r_height / srcHeight;
+    int newWidth = r_width;
+    int newHeight= r_height;
+    int x, y;
+    double* new_matrix = calloc(((newWidth * newHeight)) , sizeof(double)); 
+    for(x= 0;x < newWidth; x++){
+        for (y = 0; y < newHeight; y++){
+            double gx = x / (double)(newWidth) * (src->width-1);
+            double gy = y / (double)(newHeight) * (src->height-1);
+            int gxi = (int)gx;
+            int gyi = (int)gy;
+            Uint32 result = 0;
+            double pix00 = (matrix[gxi * srcHeight + gyi] > 0) ? 1 : 0;
+            double pix01 = (matrix[gxi+1 * srcHeight + gyi] > 0) ? 1 : 0;
+            double pix10 = (matrix[gxi * srcHeight + gyi + 1] > 0) ? 1 : 0;
+            double pix11 = (matrix[gxi+1 * srcHeight + gyi + 1] > 0) ? 1 : 0;
+            Uint8  i;
+            for(i = 0; i < 3; i++){
+                result |= (Uint8)blerp(pix00 , pix10 , pix01 , pix11 , gx - gxi, gy -gyi) << (8*i);
+            }
+            new_matrix[x * newHeight + y] = result;
+        }
+    }
+    swap(src->matrix, new_matrix);
+    free(new_matrix);
+    return src;
+}
+
+
+void AddToListWord(Word_List* word_list, Word* item){
+    printf("AddToWordList : %c\n",item->list_of_letters[1]->letter);
+    if(word_list->list == 0)
+    {
+        word_list->list = malloc(sizeof(Word*));
+        word_list->length = 1;
+        word_list->list[0] = item;
+    } else if (!(word_list->list = realloc(word_list->list, (word_list->length + 1) * sizeof(Word*)))) {
+        exit(-1);
+    } else {
+        word_list->length++;
+        word_list->list[word_list->length-1] = item;
+    }
+}
+
+void AddToListLetters(Word* word, Letter* item){
+    printf("AddToWord : %c\n",item->letter);
+    if(word->list_of_letters == 0)
+    {
+        word->list_of_letters = malloc(sizeof(Letter*));
+        word->length = 1;
+        word->list_of_letters[0] = item;
+    } else if (!(word->list_of_letters  = realloc(word->list_of_letters, (word->length + 1) * sizeof(Letter*)))) {
+        exit(-1);
+    } else {
+        word->length++;
+        word->list_of_letters[word->length-1] = item;
+    }
+}
+
+//Return the Word_List, containing Word, themself containing Letters and themself the matrixes
+Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list){
+    Word_List* word_list = (Word_List *) malloc(sizeof (Word_List));
+    int i = 0;
+    while(i < rect_list->length){
+        printf("Rect n°%i \n",i);
+        Rect* tmp = rect_list->list[i];
+        if(tmp == NULL){
+            exit(-1);
+        }
+        Rect_List* letters_rect = Extraction(image, 1, tmp, 1, 1);
+
+        Word* word_tmp = (Word*) malloc(sizeof (Word));
+        word_tmp->x = tmp->x;
+        word_tmp->y = tmp->y;
+        word_tmp->length = 0;
+        //=============================
+        for(int i = 0; i < letters_rect->length; i++){
+            Letter* letter_tmp = (Letter*) malloc(sizeof(Letter));
+            Matrix_Rect* matrix_tmp = Matrixize2(image, letters_rect->list[i]);
+            letter_tmp->matrix = resizeMatrix2(matrix_tmp, MATRIX_WIDTH, MATRIX_HEIGHT);
+            letter_tmp->letter = 'A';
+            AddToListLetters(word_tmp, letter_tmp);
+        }
+
+        //=============================
+        AddToListWord(word_list, word_tmp);
+        i++;
+    }
+    return word_list;
+}
+
 
 //Main function of RLSA
 //Param:image - SDL_Surface on which to apply the RLSA Algorithme
@@ -613,15 +701,17 @@ Word_List* RLSA(SDL_Surface* image, SDL_Surface* screen, int size){
     SDL_Surface* image_mask3 = NULL;
     SDL_Surface* image_mask4 = NULL;
     
-    image_mask1 = Process(image, image_mask1, 5, 1);            //Horizontal Mask
+    image_mask1 = Process(image, image_mask1, 100, 1);            //Horizontal Mask
     image_mask2 = Process(image, image_mask2, 2, 0);            //Vertical Mask
     image_mask3 = Merge(image_mask1, image_mask2, image_mask3);         //Merge of mask 1 & 2
     image_mask4 = Process(image_mask3, image_mask4, 10, 1);             //Last pass of horizontal pass
     SDL_FreeSurface(image_mask1);                                       //Free of used masks
     SDL_FreeSurface(image_mask2);
+    updateStepDebug(screen, image_mask4, "RLSA -- Mask", 1);
+
     SDL_FreeSurface(image_mask3);
-    Rect_List* word_rect_list = Extraction(image_mask4, 0, 0);          //Extraction of WORDS through mask4
-    DisplayRLSA(word_rect_list, image, 1);
+    Rect_List* word_rect_list = Extraction(image_mask4, 0, NULL, 0, 0);          //Extraction of WORDS through mask4
+    //DisplayRLSA(word_rect_list, image, 1);
     updateStepDebug(screen, image, "RLSA -- Final", 1);
     //=============
     // for (int i = 0; i < word_rect_list->length; ++i)
@@ -631,65 +721,11 @@ Word_List* RLSA(SDL_Surface* image, SDL_Surface* screen, int size){
     // }
     //=============
     SDL_FreeSurface(image_mask4);
-    Matrix_Rect_List* matrix_rect_list = Matrixize(image, word_rect_list);
-    //Word_List* RLSA_WORD_LIST = ExtractWordList(image, word_rect_list);
-    printf("After Matrixize : %i rectangles\n",matrix_rect_list->length);
-    for (int i = 0; i < matrix_rect_list->length; ++i){
-        matrix_rect_list->list_matrix[i] = resizeImage3(matrix_rect_list->list_matrix[i], 32, 32)
+    Word_List* RLSA_WORD_LIST = Wordify(image, word_rect_list);
+    printf("Wordify: %i words in total\n",RLSA_WORD_LIST ->length);
+    for (int i = 0; i < RLSA_WORD_LIST ->length; ++i){
+        int len = RLSA_WORD_LIST->list[i]->length;
+        printf("word n°%i has %i letters\n", i, len);
     }
-    printf("After Resize : %i rectangles\n",matrix_rect_list->length);
-    
-    //===================================================================
-    //===============RESIZE==============================================
-    // SDL_Surface* resized = NULL;
-    // resized = resizeImage(image_surface, resized, 50, 50);
-
-    // SDL_FreeSurface(resized);
-    //return RLSA_WORD_LIST;
-    return NULL;
+    return RLSA_WORD_LIST;
 }
-
-/*
-DEBRIEF:
-
-EDIT: Alternative -> oublier la notion de WORD, traiter chaque lettre à part
-                        ->difficulté : replacer les lettres dans le bonne ordre
-                            //  //   : traiter les espaces
-
-PROBLEME:  la fonction extraction fonction sur un SDL. Il faudrait en créer une deuxième
-           qui basé sur la premier, utiliserais seulement la fonction rect
-    SOLUTION-> Fonction ExtractFromRect, qui exécuterait le process directement, 
-               et créera autant de LETTERS que de bloc qu'il trouve. 
-               On matrix le rect avant de la mettre dans la LETTERS
-
-1. on a une liste de rect* contenant les WORDS
-2. il faut refaire une extraction sur ces mots pour obtenir les rectangles de LETTERS
-3. avec cette liste de rect, on la matrix -> on crée LETTERS
-4. Donc il faut ajouter ces letters à un WORDS
-5. Lui même dans une liste de WORDS
-
-
-
-Struct:
-    WORD_LIST
-    {
-        int length;
-        WORD** word_list{
-            int length;
-            int x,y,w,h;
-            Letters** word{
-                char letter;
-                double* matrix
-            }
-        }
-    
-    }
-
-Struct RLSA Main :
-Rect_List* word_rect_list = Extraction(image_mask4, 0, 0);
-for(int i = 0; i< word_rect_list->length; i++){
-    Rect_Lis
-}
-
-
-*/

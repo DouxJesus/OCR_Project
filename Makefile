@@ -4,19 +4,20 @@
 
 CC=gcc
 
-CPPFLAGS= `pkg-config --cflags sdl` -MMD
-CFLAGS=  -Wall -Wextra -g -std=c99 -O3 -IImageProcessing/ -IImage_BMP/ -INeuralNetwork/ -IRestore/
+CPPFLAGS= `pkg-config --cflags sdl` -MMD `pkg-config --cflags --libs gtk+-2.0`
+CFLAGS=  -Wall -Wextra -g -std=c99 -O3 -IImageProcessing/ -IImage_BMP/ -INeuralNetwork/ -IRestore/ -IInterface/
 LDFLAGS=
 EXEC=main
-SRC= main.c ImageProcessing/BlackAndWhite.c Image_BMP/BMP.c Image_BMP/pixel_operations.c ImageProcessing/RLSA.c ImageProcessing/Queue.c  NeuralNetwork/NeuralCreate.c Restore/restore.c
+SRC= main.c ImageProcessing/BlackAndWhite.c Image_BMP/BMP.c Image_BMP/pixel_operations.c ImageProcessing/RLSA.c ImageProcessing/Queue.c  NeuralNetwork/NeuralCreate.c Restore/restore.c Interface/interface.c
 
-LDLIBS= `pkg-config --libs sdl` -lSDL_image
+
+LDLIBS= `pkg-config --libs sdl` -lSDL_image `pkg-config --cflags --libs gtk+-2.0`
 OBJ= $(SRC:.c=.o)
 
 all: $(EXEC)
 
 main:$(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS)
+	$(CC)  $(CFLAGS) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 
 
 clean:

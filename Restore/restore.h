@@ -11,7 +11,7 @@ typedef struct Letter
 
 typedef struct Word
 {
-    Letter* list_of_letters;
+    Letter** list_of_letters;
     int x;
     int y;
     int length;
@@ -23,7 +23,13 @@ typedef struct Word_List
     Word** list;
 } Word_List;
 
+typedef struct String
+{
+    int length;
+    char* string;
+} String;
 
+String* stringyfy(Word_List* word_list);
 
 
 #endif
