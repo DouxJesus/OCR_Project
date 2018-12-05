@@ -4,7 +4,8 @@
 
 Neural CreateNeural(Neural n, double val)
 {
-	n.val = val;;
+	n.val = val;
+    n.error = 0;
 	n.predes = 0;
 	n.sucess = 0;
 	n.plenght = 0;
@@ -17,6 +18,7 @@ Neural CreateCompleteNeural(double val, Tuple* predes, Tuple* sucess, int plen, 
 {
 	Neural n;
 	n.val = val;;
+    n.error = 0;
 	n.predes = predes;
 	n.sucess = sucess;
 	n.plenght = plen;
@@ -97,10 +99,13 @@ Network CreateNetwork(int* layers, int laylenght)
 	network.graphlen = 0;
 
 	int index = 0;
+    int index_success = 0;
+    int index_predes = 0;
 
 	for (int i = 0; i < laylenght; ++i)
 	{
 		int count = layers[i];
+        index_success += count;
         printf("%i\n", count);
 		if (network.graphlen != 0)
 		{
@@ -134,25 +139,29 @@ Network CreateNetwork(int* layers, int laylenght)
 				int countpredes = layers[i - 1];
 				for (int l = 0; l < countpredes; ++l)
 				{
-					randbl = frand_a_b(0, 1);
-					Tuple t = CreateTuple(index + l, randbl);
+					randbl = frand_a_b(-10, 10);
+					Tuple t = CreateTuple(index_predes + l, randbl);
 					n = AddPredessesseur(n, t);
 				}
 			}
-
 
 			if(i < laylenght - 1)
 			{
 				int countsucess = layers[i + 1];
 				for (int k = 0; k < countsucess; ++k)
 				{
-					randbl = frand_a_b(0, 1);
-					Tuple t = CreateTuple(index + k, randbl);
+					randbl = frand_a_b(-10, 10);
+					Tuple t = CreateTuple(index_success + k, randbl);
 					n = AddSuccesseur(n, t);
 				}
 			}
 			network.graph[index + j] = n;
 		}
+
+        if (i != 0)
+        {
+            index_predes += layers[i - 1];
+        }
 		index += count;
 
 	}
@@ -328,26 +337,6 @@ Network LoadNetwork()
             printf("%f\n", n.val);
 
             n = CreateNeural(n, n.val);
-
-           /* i = 0;
-            while((c = fgetc(file)) != '\n')
-            {
-               str[i] = c;
-               i++;
-            }
-            str[i] = '\0';
-            sscanf(str, "%i", &n.plenght);
-            //printf("%i\n", n.plenght);
-
-            i = 0;
-            while((c = fgetc(file)) != '\n')
-            {
-               str[i] = c;
-               i++;
-            }
-            str[i] = '\0';
-            sscanf(str, "%i", &n.slenght);
-            //printf("%i\n", n.slenght);*/
 
             while((c = fgetc(file)) != '\n')
             {

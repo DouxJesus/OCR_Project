@@ -8,6 +8,7 @@ typedef struct Tuple{
 
 typedef struct Neural{
 	double val;
+	double error;
 	Tuple* predes;
 	Tuple* sucess;
 	int plenght;
