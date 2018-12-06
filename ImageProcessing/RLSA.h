@@ -49,7 +49,8 @@ void AddToList(Rect_List* list, Rect* item);
 void Draw_Rect(SDL_Surface* mask, Rect rect, int color);
 void ClearList(Rect_List* rect_list, int prints);
 void AddMarker(Queue* q);
-void DisplayRLSA(Rect_List* rect_list, SDL_Surface* image, int prints);
+void DisplayRLSA(Rect_List* rect_list, SDL_Surface* image, int prints, int drawWord);
 Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list, SDL_Surface * screen);
-Matrix_Rect_List* Matrixize(SDL_Surface* image, Rect_List* rect_list);
+Matrix_Rect* Matrixize(SDL_Surface* image, Rect* rect);
+double* resizeMatrix(Matrix_Rect* src, int r_width, int r_height);
 #endif //OCR_RLSA_H

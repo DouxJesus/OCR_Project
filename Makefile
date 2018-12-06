@@ -7,10 +7,6 @@ CFLAGS=  -Wall -Wextra -g -std=c99 -O3 -IImageProcessing/ -IImage_BMP/ -INeuralN
 LDFLAGS=
 EXEC=main
 SRC= main.c ImageProcessing/BlackAndWhite.c Image_BMP/BMP.c Image_BMP/pixel_operations.c ImageProcessing/RLSA.c ImageProcessing/Queue.c  NeuralNetwork/NeuralCreate.c Restore/restore.c Interface/interface.c
-
-
-
->>>>>>> 80e076e502e28700831f843b427d0831ab9562b0
 LDLIBS= `pkg-config --libs sdl` -lSDL_image `pkg-config --cflags --libs gtk+-2.0`
 OBJ= $(SRC:.c=.o)
 

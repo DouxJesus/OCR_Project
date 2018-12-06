@@ -50,19 +50,17 @@ int main(int argc, char** argv) {
         wait_for_keypressed();
     // ============== Grayscale ===========================
         to_grayscale(image_surface);
-        updateStep(screen_surface, image_surface, "Grayscaling", 1);
+        
         //printf("%i %i \n", maxi, mini);
 
     // ============ Black & White ===========================
         BlackAndWhite(image_surface);
-        updateStep(screen_surface, image_surface, "Black and White", 1);
-
 
     // ================= RSLA =======================
     // ==============================================
 
         Word_List* RLSA_Output = RLSA(image_surface, screen_surface, 1);
-        
+
         String* text = stringyfy(RLSA_Output);
         printf("==============================================================\n");
         printf("==============================================================\n");
