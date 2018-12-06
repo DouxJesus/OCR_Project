@@ -71,7 +71,7 @@ static void SaveTxt()
 }
 
 
-void runOCR()
+void runOCR(GtkWidget* button, GtkWidget* buff)
 {
     printf("%s\n", filename);
     str = filename;
@@ -81,13 +81,19 @@ void runOCR()
     image_surface = load_image((char*)filename);
     to_grayscale(image_surface);
     BlackAndWhite(image_surface);
-    Word_List* RLSA_Output = RLSA(image_surface, 1);
+    Word_List* RLSA_Output = RLSA(image_surface);
     //Network network = LoadNetwork();
 
     String* text = stringyfy(RLSA_Output);
 
     str = text->string;
     gtk_text_buffer_set_text(text_buffer, text->string, -1);
+
+    char* file= "./tmp/tmp.bmp";       
+        GtkImage* tmpimg = gtk_image_new_from_file(file);
+        GdkPixbuf* pix_buff = gtk_image_get_pixbuf(tmpimg);
+        pix_buff = gdk_pixbuf_scale_simple(pix_buff, buff->allocation.width, buff->allocation.height, GDK_INTERP_BILINEAR);
+        gtk_image_set_from_pixbuf(GTK_IMAGE(image), pix_buff);
 
 }
 
@@ -143,7 +149,7 @@ int main(int argc, char** argv){
 
     run = gtk_tool_button_new_from_stock(GTK_STOCK_MEDIA_PLAY);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), run, -1);
-    g_signal_connect(G_OBJECT(run), "clicked", G_CALLBACK(runOCR), NULL);
+    g_signal_connect(G_OBJECT(run), "clicked", G_CALLBACK(runOCR), left_box);
 
     save = gtk_tool_button_new_from_stock(GTK_STOCK_SAVE_AS);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), save, -1);
