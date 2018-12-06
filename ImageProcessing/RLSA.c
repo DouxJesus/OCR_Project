@@ -598,7 +598,7 @@ Matrix_Rect* Matrixize2(SDL_Surface* image, Rect* rect){
     return output;
 }
 
-double* resizeMatrix3(Matrix_Rect* src, int r_width, int r_height){ 
+/*double* resizeMatrix3(Matrix_Rect* src, int r_width, int r_height){ 
     int srcWidth = src->width;
     int srcHeight = src->height;
     double* matrix = src->matrix;
@@ -634,7 +634,7 @@ double* resizeMatrix3(Matrix_Rect* src, int r_width, int r_height){
         new_matrix[x * newHeight + y] = result;
     }
     return output;
-}
+}*/
 
 
 //Resize the given matrix at the given width and height, by applying a billineral interpolation
@@ -713,7 +713,7 @@ void AddToListLetters(Word* word, Letter* item){
 }
 
 //Return the Word_List, containing Word, themself containing Letters and themself the matrixes
-Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list, SDL_Surface * screen){
+Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list){
     Word_List* word_list = (Word_List *) malloc(sizeof (Word_List));
     word_list->list = 0;
     word_list->length = 0;
@@ -726,7 +726,7 @@ Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list, SDL_Surface * scree
         }
         Rect_List* letters_rect = Extraction(image, 1, tmp, 1, 1);
         DisplayRLSA(letters_rect, image, 1);
-        updateStepDebug(screen, image, "Wordify", 1);
+        //updateStepDebug(screen, image, "Wordify", 1);
         Word* word_tmp = (Word*) malloc(sizeof (Word));
         word_tmp->list_of_letters = 0;
         word_tmp->x = tmp->x;
@@ -740,9 +740,9 @@ Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list, SDL_Surface * scree
             Matrix_Rect* matrix_tmp = Matrixize2(image, letters_rect->list[i]);
             printf("==================Matrixize===============\n");
             print_matrix("Matrix1",matrix_tmp->matrix, letters_rect->list[i]->width, letters_rect->list[i]->height );
-            letter_tmp->matrix = resizeMatrix2(matrix_tmp, MATRIX_WIDTH, MATRIX_HEIGHT);
+            //letter_tmp->matrix = resizeMatrix2(matrix_tmp, MATRIX_WIDTH, MATRIX_HEIGHT);
             printf("=========================================\n");
-            print_matrix("Matrix2",letter_tmp->matrix, MATRIX_WIDTH, MATRIX_HEIGHT );
+            //print_matrix("Matrix2",letter_tmp->matrix, MATRIX_WIDTH, MATRIX_HEIGHT );
             letter_tmp->letter = 'A';
             AddToListLetters(word_tmp, letter_tmp);
         }
@@ -785,7 +785,7 @@ Word_List* RLSA(SDL_Surface* image, int size){
     // }
     //=============
     SDL_FreeSurface(image_mask4);
-    Word_List* RLSA_WORD_LIST = Wordify(image, word_rect_list, screen);
+    Word_List* RLSA_WORD_LIST = Wordify(image, word_rect_list);
     // printf("Wordify: %i words in total\n",RLSA_WORD_LIST ->length);
     for (int i = 0; i < RLSA_WORD_LIST ->length; ++i){
         int len = RLSA_WORD_LIST->list[i]->length;

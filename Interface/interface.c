@@ -63,8 +63,8 @@ static void SaveTxt()
                       NULL);
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-        char *file;;
-        file = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+        char *file;
+        file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER (dialog));
         g_file_set_contents(file, str, -1, NULL);   
     }
     gtk_widget_destroy (dialog);
@@ -76,18 +76,18 @@ void runOCR()
     printf("%s\n", filename);
     str = filename;
     gtk_text_buffer_set_text (text_buffer, filename, -1);
-    /*SDL_Surface* image_surface;
+    SDL_Surface* image_surface;
     init_sdl();
     image_surface = load_image((char*)filename);
     to_grayscale(image_surface);
     BlackAndWhite(image_surface);
     Word_List* RLSA_Output = RLSA(image_surface, 1);
-    Network network = LoadNetwork();
+    //Network network = LoadNetwork();
 
     String* text = stringyfy(RLSA_Output);
 
     str = text->string;
-    gtk_text_buffer_set_text(text_buffer, text->string, -1);*/
+    gtk_text_buffer_set_text(text_buffer, text->string, -1);
 
 }
 

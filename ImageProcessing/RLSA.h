@@ -50,6 +50,6 @@ void Draw_Rect(SDL_Surface* mask, Rect rect, int color);
 void ClearList(Rect_List* rect_list, int prints);
 void AddMarker(Queue* q);
 void DisplayRLSA(Rect_List* rect_list, SDL_Surface* image, int prints);
-Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list, SDL_Surface * screen);
+Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list);
 Matrix_Rect_List* Matrixize(SDL_Surface* image, Rect_List* rect_list);
 #endif //OCR_RLSA_H
