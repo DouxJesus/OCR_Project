@@ -4,6 +4,7 @@
 
 
 //VARIABLES GLOBALES
+GtkWidget * MainWindow = NULL;
 GtkWidget * display_surface = NULL;
 const gchar *filename = NULL;
 GtkWidget *text_view = NULL;
@@ -11,30 +12,19 @@ GtkTextIter iter;
 GtkTextBuffer *text_buffer = NULL;
 GtkImage *image = NULL;
 
-static void LoadImg(GtkWidget* button, GtkWidget* frame)
+static void LoadImg(GtkWidget* button)
 {
 
 	GtkWidget *dialog = NULL;
-    gint res;
-
-    dialog = gtk_file_chooser_dialog_new ("Open Image", GTK_WINDOW(frame), GTK_FILE_CHOOSER_ACTION_OPEN, ("_Cancel"),
+    dialog = gtk_file_chooser_dialog_new("Open Image", GTK_WINDOW(MainWindow), GTK_FILE_CHOOSER_ACTION_OPEN, ("_Cancel"),
                                           GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT,
                                           NULL);
-    res = gtk_dialog_run(GTK_DIALOG (dialog));
-
-    if (res == GTK_RESPONSE_ACCEPT)
+    if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-    	GtkFileChooser *choosefile = GTK_FILE_CHOOSER(dialog);
-        filename = gtk_file_chooser_get_filename(choosefile);
-        printf("%s\n", filename);
-        
+        filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));       
         GtkImage* tmpimg = gtk_image_new_from_file(filename);
         GdkPixbuf* pix_buff = gtk_image_get_pixbuf(tmpimg);
         gtk_image_set_from_pixbuf(image, pix_buff);
-		//gtk_image_set_from_image(image, tmpimg, NULL); //gtk_image_new_from_file(filename);
-		//GdkPixbuf* pix_buff =  gtk_image_get_pixbuf(image);
-		//gtk_container_add(GTK_CONTAINER(frame), image);
-    	//gtk_frame_set_label(GTK_FRAME(frame), "Run the OCR !");
 	}
 	 gtk_widget_destroy (dialog);
 }
@@ -67,7 +57,6 @@ int main(int argc, char** argv){
     gtk_init(&argc, &argv);
 
     //INIT
-    GtkWidget * MainWindow = NULL;
 
     GtkWidget* Mainbox = NULL;
     GtkWidget *upBox = NULL;
@@ -141,7 +130,7 @@ int main(int argc, char** argv){
     //SURFACE AFFICHAGE IMAGE
     image = gtk_image_new_from_file(filename);
     //GdkPixbuf* pix_buff =  gtk_image_get_pixbuf(image);
-    gtk_container_add(GTK_CONTAINER(left_box), image);
+    gtk_container_add(GTK_CONTAINER(left_box), GTK_WIDGET(image));
     g_signal_connect(G_OBJECT(openFile), "clicked", G_CALLBACK(LoadImg), left_box); 
 
 

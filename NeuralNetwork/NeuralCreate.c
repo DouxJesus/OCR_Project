@@ -106,7 +106,6 @@ Network CreateNetwork(int* layers, int laylenght)
 	{
 		int count = layers[i];
         index_success += count;
-        printf("%i\n", count);
 		if (network.graphlen != 0)
 		{
 			if(!(network.graph = realloc(network.graph, (network.graphlen + count) * sizeof(Neural))))
@@ -224,7 +223,7 @@ void SaveNetwork(Network network)
     		{
     			Tuple t = listpredess[j];
     			//if(j != n.plenght - 1)
-    				sprintf(str, "(%i,%f)-", t.pos, t.cost);
+    				sprintf(str, "(%i,%f)_", t.pos, t.cost);
     			//else
     			//	sprintf(str, "(%i,%f)", t.pos, t.cost);
     			fputs(str, file);
@@ -234,7 +233,7 @@ void SaveNetwork(Network network)
     		{
     			Tuple t = listsucess[k];
     			//if(k != n.slenght - 1)
-    				sprintf(str, "(%i,%f)-", t.pos, t.cost);
+    				sprintf(str, "(%i,%f)_", t.pos, t.cost);
     			//else
     			//	sprintf(str, "(%i,%f)", t.pos, t.cost);
     			fputs(str, file);
@@ -267,11 +266,9 @@ Network LoadNetwork()
    		{
    			str[i] = c;
    			i++;
-   			//printf("%c", c);
  		}
         str[i] = '\0';
  		sscanf(str, "%i", &network.laylenght);
- 		printf("%i\n", network.laylenght);
 
  		if(!(network.layers = malloc(network.laylenght * sizeof(int))))
     	{
@@ -287,8 +284,6 @@ Network LoadNetwork()
             j++;
  		 	while ((c = fgetc(file)) != '-')
    			{
-   			//https://www.tutorialspoint.com/c_standard_library/c_function_sscanf.htm
-   			//sscanf
    				str[j] = c;
    				j++;
  			}
@@ -296,22 +291,17 @@ Network LoadNetwork()
             int val = 0;
  			sscanf(str, "%i", &val);
  			network.layers[i] = val;
- 			printf("%i", network.layers[i]);
  			i++;
  		}
-         printf("\n");
 
         i = 0;
          while ((c = fgetc(file)) != '\n')
         {
             str[i] = c;
             i++;
-            //printf("%c", c);
         }
         str[i] = '\0';
         sscanf(str, "%i", &network.graphlen);
-        printf("%i\n", network.graphlen);
-
         network.graph = malloc(network.graphlen * sizeof(Neural));
 
         if(!network.graph)
@@ -334,7 +324,6 @@ Network LoadNetwork()
             }
             str[i] = '\0';
             sscanf(str, "%lf", &n.val);
-            printf("%f\n", n.val);
 
             n = CreateNeural(n, n.val);
 
@@ -343,7 +332,7 @@ Network LoadNetwork()
                 i = 0;
                 str[i] = c;
                 i++;
-                while ((c = fgetc(file)) != '-')
+                while ((c = fgetc(file)) != '_')
                 {
                     str[i] = c;
                     i++;
@@ -351,13 +340,11 @@ Network LoadNetwork()
                 str[i] = '\0';
                 int pos = 0;
                 double cost = 0;
-                 //printf("ok\n");
             sscanf(str, "(%i,%lf)", &pos, &cost);
 
             Tuple t = CreateTuple(pos, cost);
 
             n = AddPredessesseur(n, t);
-            //printf("%i-%f\n", pos, cost);
             }
 
             while((c = fgetc(file)) != '\n')
@@ -365,7 +352,7 @@ Network LoadNetwork()
                 i = 0;
                 str[i] = c;
                 i++;
-                while ((c = fgetc(file)) != '-')
+                while ((c = fgetc(file)) != '_')
                 {
                     str[i] = c;
                     i++;
@@ -378,17 +365,13 @@ Network LoadNetwork()
             Tuple t = CreateTuple(pos, cost);
 
             n = AddSuccesseur(n, t);
-            //printf("%i-%f ", pos, cost);
             }
-
-            printf("%i\n", j);
             network.graph[j] = n;
             j++;
         }
 
  		 while ((c = fgetc(file)) != EOF)
    		{
-            printf("%c", c);
  		}
       fclose (file); 
     }
