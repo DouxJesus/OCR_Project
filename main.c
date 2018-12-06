@@ -60,7 +60,6 @@ int main(int argc, char** argv) {
 
     // ================= RSLA =======================
     // ==============================================
-
         Word_List* RLSA_Output = RLSA(image_surface, 1);
         String* text = stringyfy(RLSA_Output);
         printf("==============================================================\n");

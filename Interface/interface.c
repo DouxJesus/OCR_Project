@@ -28,7 +28,7 @@ char* str = "Hello OCR Project! :)\nPlease Select a file to start.";
 
 static void LoadImg(GtkWidget* button, GtkWidget* buff)
 {
-	GtkWidget *dialog = NULL;
+    GtkWidget *dialog = NULL;
     dialog = gtk_file_chooser_dialog_new("Open Image", GTK_WINDOW(MainWindow), GTK_FILE_CHOOSER_ACTION_OPEN, ("_Cancel"),
                                           GTK_RESPONSE_CANCEL, ("_Open"), GTK_RESPONSE_ACCEPT,
                                           NULL);
@@ -39,8 +39,8 @@ static void LoadImg(GtkWidget* button, GtkWidget* buff)
         GdkPixbuf* pix_buff = gtk_image_get_pixbuf(tmpimg);
         pix_buff = gdk_pixbuf_scale_simple(pix_buff, buff->allocation.width, buff->allocation.height, GDK_INTERP_BILINEAR);
         gtk_image_set_from_pixbuf(GTK_IMAGE(image), pix_buff);
-	}
-	 gtk_widget_destroy (dialog);
+    }
+     gtk_widget_destroy (dialog);
 }
 
 static void Copy()
@@ -73,9 +73,9 @@ static void SaveTxt()
 
 void runOCR()
 {
-	printf("%s\n", filename);
+    printf("%s\n", filename);
     str = filename;
-	gtk_text_buffer_set_text (text_buffer, filename, -1);
+    gtk_text_buffer_set_text (text_buffer, filename, -1);
     /*SDL_Surface* image_surface;
     init_sdl();
     image_surface = load_image((char*)filename);
@@ -98,7 +98,7 @@ int main(int argc, char** argv){
 
     GtkWidget* Mainbox = NULL;
     GtkWidget *upBox = NULL;
-	GtkWidget *downBox = NULL;
+    GtkWidget *downBox = NULL;
     GtkWidget *toolbar = NULL;
 
     GtkToolItem *openFile = NULL;
@@ -107,8 +107,8 @@ int main(int argc, char** argv){
     GtkToolItem *copy = NULL;
     GtkToolItem *exit = NULL;
 
-	GtkWidget *left_box = NULL;
-	GtkWidget *right_box = NULL;
+    GtkWidget *left_box = NULL;
+    GtkWidget *right_box = NULL;
 
     //MAIN WINDOWS
     MainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -167,11 +167,11 @@ int main(int argc, char** argv){
 
 
     //SURFACE DE TEXTE
-  	text_view = gtk_text_view_new();
+    text_view = gtk_text_view_new();
     text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-  	gtk_box_pack_start (GTK_BOX (right_box), text_view, TRUE, TRUE, 0);
-  	gtk_text_buffer_get_iter_at_line(text_buffer, &iter, 0);
-  	gtk_text_buffer_insert(text_buffer, &iter, str, -1);
+    gtk_box_pack_start (GTK_BOX (right_box), text_view, TRUE, TRUE, 0);
+    gtk_text_buffer_get_iter_at_line(text_buffer, &iter, 0);
+    gtk_text_buffer_insert(text_buffer, &iter, str, -1);
 
     gtk_widget_show_all(MainWindow);
     gtk_main();
