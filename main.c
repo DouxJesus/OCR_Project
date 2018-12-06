@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
     // ================= RSLA =======================
     // ==============================================
 
-        Word_List* RLSA_Output = RLSA(image_surface, screen_surface, 1);
+        Word_List* RLSA_Output = RLSA(image_surface, 1);
         String* text = stringyfy(RLSA_Output);
         printf("==============================================================\n");
         printf("==============================================================\n");
@@ -74,3 +74,4 @@ int main(int argc, char** argv) {
 }
     return 0;
 }
+*/

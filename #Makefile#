@@ -15,7 +15,7 @@ all: $(EXEC)
 main:$(OBJ)
 	$(CC)  $(CFLAGS) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 
-gtk:Interface/interface.o
+gtk: 
 	$(CC)  $(CFLAGS) $(CPPFLAGS) -o $@ $^ $(LDLIBS)
 clean:
 	${RM} *.o

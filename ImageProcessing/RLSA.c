@@ -695,7 +695,7 @@ Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list){
 //Param:image - SDL_Surface on which to apply the RLSA Algorithme
 //Param:size - int to define the size of the output matrices
 //Return a list of double
-Word_List* RLSA(SDL_Surface* image, SDL_Surface* screen, int size){
+Word_List* RLSA(SDL_Surface* image, int size){
     SDL_Surface* image_mask1 = NULL;                                    //Init of the necessary SDL_Surfaces
     SDL_Surface* image_mask2 = NULL;
     SDL_Surface* image_mask3 = NULL;
@@ -707,12 +707,12 @@ Word_List* RLSA(SDL_Surface* image, SDL_Surface* screen, int size){
     image_mask4 = Process(image_mask3, image_mask4, 10, 1);             //Last pass of horizontal pass
     SDL_FreeSurface(image_mask1);                                       //Free of used masks
     SDL_FreeSurface(image_mask2);
-    updateStepDebug(screen, image_mask4, "RLSA -- Mask", 1);
+    //updateStepDebug(screen, image_mask4, "RLSA -- Mask", 1);
 
     SDL_FreeSurface(image_mask3);
     Rect_List* word_rect_list = Extraction(image_mask4, 0, NULL, 0, 0);          //Extraction of WORDS through mask4
     //DisplayRLSA(word_rect_list, image, 1);
-    updateStepDebug(screen, image, "RLSA -- Final", 1);
+    //updateStepDebug(screen, image, "RLSA -- Final", 1);
     //=============
     // for (int i = 0; i < word_rect_list->length; ++i)
     // {

@@ -36,7 +36,7 @@ typedef struct Matrix_Rect_List
 
 
 
-Word_List* RLSA(SDL_Surface* image, SDL_Surface* screen, int size);
+Word_List* RLSA(SDL_Surface* image,  int size);
 SDL_Surface* Process(SDL_Surface* img, SDL_Surface* output, int threshold ,int horizontal);
 SDL_Surface* InitSurfaceFromAnother(SDL_Surface *img, SDL_Surface *mask);
 SDL_Surface* Merge(SDL_Surface *mask1, SDL_Surface *mask2, SDL_Surface *output);

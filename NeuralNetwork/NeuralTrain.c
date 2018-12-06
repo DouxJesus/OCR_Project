@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int NUMBERLAYER = 4;
+int NUMBERCHARACTERS = 4;
+int NUMBERELEMENTS = 9;
 
 //**********************************************************************************
 //  INITIALZE
@@ -248,6 +251,11 @@ void train(Network network, double** exercices, double** targets, int numberChar
     }
 }
 
+char runNeural(Network network, double* input)
+{
+    propagation(network, input);
+    readResult(net, NUMBERCHARACTERS);
+}
 
 
 
@@ -257,9 +265,6 @@ void train(Network network, double** exercices, double** targets, int numberChar
 
 int main()
 {
-    int NUMBERLAYER = 4;
-    int NUMBERCHARACTERS = 4;
-    int NUMBERELEMENTS = 9;
 
     int* layers = malloc(NUMBERLAYER * sizeof(int));
     if(!(layers))
