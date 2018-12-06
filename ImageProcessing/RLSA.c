@@ -647,6 +647,16 @@ Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list, SDL_Surface * image
     return word_list;
 }
 
+int CopySurface(SDL_Surface * src, SDL_Surface * dst){
+    for(int i = 0; i < src->w; i++){
+        for (int j = 0; j < src->h; ++j)
+        {
+            put_pixel(dst, i, j, get_pixel(src, i, j));
+        }
+    }
+    return 0;
+}
+
 
 //Main function of RLSA
 //Param:image - SDL_Surface on which to apply the RLSA Algorithme
@@ -655,7 +665,12 @@ Word_List* Wordify(SDL_Surface* image, Rect_List* rect_list, SDL_Surface * image
 Word_List* RLSA(SDL_Surface* image, SDL_Surface* screen, int size){
     SDL_Surface* image_drawings = NULL;                                         //SDL_Surface where drawings will be made
     image_drawings = InitSurfaceFromAnother(image, image_drawings);
-    SDL_BlitSurface(image, NULL, image_drawings, NULL);
+    //SDL_BlitSurface(image, NULL, image_drawings, NULL);
+    int report = CopySurface(image, image_drawings);
+    if(report != 0){
+        printf("Error while copying\n");
+        SDL_GetError() ;
+    }
     //updateStepDebug(screen, image_drawings, "Intro", 1);
     SDL_Surface* image_mask1 = NULL;                                            //Init of the necessary SDL_Surfaces
     SDL_Surface* image_mask2 = NULL;
@@ -679,7 +694,7 @@ Word_List* RLSA(SDL_Surface* image, SDL_Surface* screen, int size){
 
     //updateStepDebug(screen, image_drawings, "RLSA -- Final drawing", 1);
     SDL_LockSurface(image_drawings);
-    int report = SDL_SaveBMP(image_drawings, OUTPUT_PATH);
+    report = SDL_SaveBMP(image_drawings, OUTPUT_PATH);
 
     if(report != 0){
         printf("Something went wrong while saving image drawings\n");

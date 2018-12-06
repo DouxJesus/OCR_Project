@@ -48,28 +48,18 @@ int main(int argc, char** argv) {
         screen_surface = display_image(image_surface);
         printf("SDL Initiated \n");
         wait_for_keypressed();
-    // ============== Grayscale ===========================
-        to_grayscale(image_surface);
-        
-        //printf("%i %i \n", maxi, mini);
 
-    // ============ Black & White ===========================
+        //TODELETE
+        to_grayscale(image_surface);
         BlackAndWhite(image_surface);
 
-    // ================= RSLA =======================
-    // ==============================================
-
         Word_List* RLSA_Output = RLSA(image_surface, screen_surface, 1);
-
+        //insert here IA
         String* text = stringyfy(RLSA_Output);
-        printf("==============================================================\n");
-        printf("==============================================================\n");
-        printf("==============================================================\n");
-        printf("%s\n",text->string );
+
         SDL_FreeSurface(image_surface);
         SDL_FreeSurface(screen_surface);
         printf("Quitting ...\n");
-    } else {
 }
     return 0;
 }
