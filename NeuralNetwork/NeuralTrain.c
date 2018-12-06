@@ -90,12 +90,13 @@ double sum(Neural neural, Network network)
     return res;
 }
 
-double error(Network network, Neural neural, double target, int isOut)
+Network error(Network network, Neural neural, double target, int isOut)
 {
     double error;
     if (isOut)
     {
-        error = (target - neural.val)* neural.val * ( 1- neural.val);
+        error = (target - neural.val)* neural.val * (1 - neural.val);
+        printf("TARGET = %f   ERROR = %f \n", target, error);
     }
     else
     {
@@ -107,20 +108,22 @@ double error(Network network, Neural neural, double target, int isOut)
         }
         error *= sum;
     }
+    //printf("ERROR = %f \n", error);
     neural.error = error;
-    return error;
+    return network;
 }
 
 double newCost(Network network, Neural source, Neural dest, double step, double target, int isOut)
 {
-    return step * error(network, dest, target, isOut) * source.val;
+    network = error(network, dest, target, isOut);
+    return step * dest.error * source.val;
 }
 
 //**********************************************************************************
 //  PROPAGATION / RETROPROPAGATION
 //**********************************************************************************
 
-void propagation(Network network, double* inputs)
+Network propagation(Network network, double* inputs)
 {
     for(int j = 1; j < network.layers[0]; j++)
     {
@@ -133,51 +136,51 @@ void propagation(Network network, double* inputs)
             network.graph[i].val = sigmoid(sum(network.graph[i], network));
         }
     }
+    return network;
 }
 
-void retro(Network network, double* target, double step)
+Network retro(Network network, double* target, double step)
 {
-    int nbCurrent = network.graphlen - network.layers[currentLayer];
+    for(int s = 0; s < 4; s++)
+    {
+        printf("%f ", target[s]);
+    }
+    printf("\n");
     int currentLayer = network.laylenght - 1;
+    int nbCurrent = network.graphlen - network.layers[currentLayer];
+
     const int lastLayer = currentLayer;
 
-    // for (int k = 0; k < network.graphlen; i++)
-    // {
-    //     /* code */
-    // }
-
-    for (int i = network.graphlen - 1; i > 0; i--)
+    for (int i = network.graphlen - 1; i >= 0; i--)
     {
         Neural currentNeural = network.graph[i];
         int count = currentNeural.plenght;
-        if(currentLayer == lastLayer)
-            {
-                cost = newCost(network, 0, currentNeural, step, target[j], True);
-            }
-        else
-        {
         for (int j= 0; j < count; ++j)
         {
+            double cost;
             if(currentLayer == lastLayer)
+
             {
             //cout 
             //cost = newCost(network, predes du noeud courant,
             //                       noeud courant, step, target courant, dernière couche ? bool);
                 int predes_idx = currentNeural.predes[j].pos;
-                cost = newCost(network, network.graph[predes_idx], currentNeural, step, target[j], 1);
+                //printf("NbCureent %i \n", i - nbCurrent - 1);
+                cost = newCost(network, network.graph[predes_idx], currentNeural, step, target[i - nbCurrent - 1], 1);
             }
-            else {
-                if(i == nbCurrent)
-                {
-                    //switch layer
-                     currentLayer--;
-                     nbCurrent-= network.laylenght[currentLayer];
-                 }
-                    //into a layer
-                 int predes_idx = currentNeural.predes[j].pos;
+            else
+            {
+                //into a layer
+                int predes_idx = currentNeural.predes[j].pos;
                 cost = newCost(network, network.graph[predes_idx], currentNeural, step, 0, 0);
-                }
+            }
+            network.graph[i].predes[j].cost = cost;
         }
+        if(i == nbCurrent)
+        {
+            //switch layer
+            currentLayer--;
+            nbCurrent-= network.layers[currentLayer];
         }
     }
     /*int pastNode = network.layers[0];
@@ -205,6 +208,32 @@ void retro(Network network, double* target, double step)
         }
         pastNode += network.layers[i];
     }*/
+    /*int pastNode = network.layers[0];
+    for(int i = 1; i < network.laylenght; i++)
+    {
+        int nbCurrent = network.layers[i];
+        for (int  k = 0; k < nbCurrent; k++)
+        {
+            for(int j = (network.graph[pastNode + k].plenght - 1); j >= 0; j--)
+            {
+                double cost = newCost(network, network.graph[network.graph[k + pastNode].predes[j].pos],
+                                      network.graph[k + pastNode], step, target[k], i == (network.laylenght - 1));
+                if (i == (network.laylenght - 1))
+                {
+                    cost = newCost(network, network.graph[network.graph[k + pastNode].predes[j].pos],
+                                   network.graph[k + pastNode], step, target[k], i == (network.laylenght - 1));
+                }
+                else
+                {
+                    cost = newCost(network, network.graph[network.graph[k + pastNode].predes[j].pos],
+                                   network.graph[k + pastNode], step, 0, i == (network.laylenght - 1));
+                }
+                network.graph[k + pastNode].predes[j].cost += cost;
+            }
+        }
+        pastNode += network.layers[i];
+    }*/
+    return network;
 }
 
 //**********************************************************************************
@@ -222,15 +251,12 @@ char readResult(Network network, int numberCharacters)
     int max = index;
     for(int i = index; i < network.graphlen; i++)
     {
-        printf("idx : %i, val : %f\n", i, network.graph[i].val);
         if (network.graph[i].val > network.graph[max].val)
         {
             max = i;
-            //printf("max : %i, maxval : %f\n", max, network.graph[max].val);
         }
     }
     char *characters = initialzeResult(numberCharacters);
-    printf("%i\n", max - index);
     return characters[max - index];
 }
 
@@ -239,16 +265,36 @@ char readResult(Network network, int numberCharacters)
 //  TRAINING FUNCTION
 //**********************************************************************************
 
-void train(Network network, double** exercices, double** targets, int numberCharacters)
+Network train(Network network, double** exercices, double** targets, int numberCharacters)
 {
-    for(int k = 0; k < 1000; k++)
+
+    for(int w = 0; w < 4; w++)
+    {
+
+    }
+    for(int k = 0; k < 10000; k++)
     {
         for(int j = 0; j < numberCharacters; j++)
         {
-            propagation(network, exercices[j]);
-            retro(network, targets[j], 0.1);
+            /*for(int s = 0; s < 4; s++)
+            {
+                printf("%f ", targets[j][s]);
+            }
+            printf("\n");*/
+            network = propagation(network, exercices[j]);
+            network = retro(network, targets[j], 0.1);
+            int index = 0;
+            for(int j = 0; j < network.laylenght - 1; j++)
+            {
+                index += network.layers[j];
+            }
+            for(int i = 0; i < network.layers[network.laylenght - 1]; i++)
+            {
+                //printf("The error of the neurone %i is %f\n", index + i, network.graph[index + i].error);
+            }
         }
     }
+    return network;
 }
 
 char runNeural(Network network, double* input)
@@ -332,26 +378,27 @@ int main()
 
     double** target = initializeTargets(NUMBERCHARACTERS);
 
-    //propagation(net, inputs[0]);
+    net = train(net, inputs, target, NUMBERCHARACTERS);
 
-    train(net, inputs, target, NUMBERCHARACTERS);
     SaveNetwork(net);
     FreeNetwork(net);
     net = LoadNetwork();
     SaveNetwork(net);
-    printf("The recognize character isss : %c.\n", readResult(net, NUMBERCHARACTERS));
-    propagation(net, inputs[0]);
 
-    printf("\n");
     for(int index = 0; index < NUMBERCHARACTERS; index++)
     {
-        propagation(net, inputs[index]);
+        printf("\n");
+        net = propagation(net, inputs[index]);
         for(int yo = 0; yo < NUMBERELEMENTS; yo++)
         {
             printf("%i ", (int) inputs[index][yo]);
         }
         printf("\n");
-
+        for(int h = 0; h < net.layers[0]; h++)
+        {
+            printf("%d ", (int) net.graph[h].val);
+        }
+        printf("\n");
         printf("Result: ");
         int mar = 0;
         for(int g = 0; g < net.laylenght - 1; g++)
