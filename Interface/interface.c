@@ -1,3 +1,4 @@
+
 // #include <gtk/gtk.h>
 // #include <stdlib.h>
 // #define GTK_STOCK_MEDIA_PLAY       "gtk-media-play"
@@ -136,7 +137,6 @@
 //     label = gtk_label_new ("<big><big>Select a image to analyse</big></big>");
 //     gtk_container_add (GTK_CONTAINER(display_surface), label);
 //     gtk_label_set_use_markup(GTK_LABEL(label), 1);
-
 
 //     //SURFACE AFFICHAGE IMAGE
 //     image = gtk_image_new_from_file(filename);

@@ -75,12 +75,14 @@ Neural indexToNeural(Network network, int couche ,int unit)
 //  LEARNING FORMULA
 //**********************************************************************************
 
+
+//Calcul  de la valeur d'activation
 double sum(Neural neural, Network network)
 {
     double res = 0;
     for (int i = 0; i < neural.plenght; i++)
     {
-        res += neural.predes[i].cost * network.graph[neural.predes[i].pos].val;
+        res += neural.predes[i].cost * network.graph[neural.predes[i].pos].val; //somme de tt les predes*cout 
     }
     return res;
 }
@@ -119,7 +121,7 @@ void propagation(Network network, double* inputs)
 {
     for(int j = 1; j < network.layers[0]; j++)
     {
-        network.graph[j].val = inputs[j - 1];
+        network.graph[j].val = inputs[j - 1]; //on place les valeurs dans la couche d'entrée
     }
     for (int i = network.layers[0]; i < network.graphlen; i++)
     {
@@ -132,7 +134,50 @@ void propagation(Network network, double* inputs)
 
 void retro(Network network, double* target, double step)
 {
-    int pastNode = network.layers[0];
+    int nbCurrent = network.graphlen - network.layers[currentLayer];
+    int currentLayer = network.laylenght - 1;
+    const int lastLayer = currentLayer;
+
+    // for (int k = 0; k < network.graphlen; i++)
+    // {
+    //     /* code */
+    // }
+
+    for (int i = network.graphlen - 1; i > 0; i--)
+    {
+        Neural currentNeural = network.graph[i];
+        int count = currentNeural.plenght;
+        if(currentLayer == lastLayer)
+            {
+                cost = newCost(network, 0, currentNeural, step, target[j], True);
+            }
+        else
+        {
+        for (int j= 0; j < count; ++j)
+        {
+            if(currentLayer == lastLayer)
+            {
+            //cout 
+            //cost = newCost(network, predes du noeud courant,
+            //                       noeud courant, step, target courant, dernière couche ? bool);
+                int predes_idx = currentNeural.predes[j].pos;
+                cost = newCost(network, network.graph[predes_idx], currentNeural, step, target[j], 1);
+            }
+            else {
+                if(i == nbCurrent)
+                {
+                    //switch layer
+                     currentLayer--;
+                     nbCurrent-= network.laylenght[currentLayer];
+                 }
+                    //into a layer
+                 int predes_idx = currentNeural.predes[j].pos;
+                cost = newCost(network, network.graph[predes_idx], currentNeural, step, 0, 0);
+                }
+        }
+        }
+    }
+    /*int pastNode = network.layers[0];
     for(int i = 1; i < network.laylenght; i++)
     {
         int nbCurrent = network.layers[i];
@@ -156,7 +201,7 @@ void retro(Network network, double* target, double step)
             }
         }
         pastNode += network.layers[i];
-    }
+    }*/
 }
 
 //**********************************************************************************
@@ -172,14 +217,17 @@ char readResult(Network network, int numberCharacters)
     }
     index++;
     int max = index;
-    for(int i = index + 1; i < index + network.layers[network.laylenght - 1]; i++)
+    for(int i = index; i < network.graphlen; i++)
     {
+        printf("idx : %i, val : %f\n", i, network.graph[i].val);
         if (network.graph[i].val > network.graph[max].val)
         {
             max = i;
+            //printf("max : %i, maxval : %f\n", max, network.graph[max].val);
         }
     }
     char *characters = initialzeResult(numberCharacters);
+    printf("%i\n", max - index);
     return characters[max - index];
 }
 
@@ -192,25 +240,9 @@ void train(Network network, double** exercices, double** targets, int numberChar
 {
     for(int k = 0; k < 1000; k++)
     {
-        printf("####################################\n");
         for(int j = 0; j < numberCharacters; j++)
         {
             propagation(network, exercices[j]);
-            printf("Result  = ");
-            int index = 0;
-            for(int l = 0; l < network.laylenght - 1; l++)
-            {
-                index += network.layers[l];
-            }
-            for(int i = index + 1; i < index + network.layers[network.laylenght - 1]; i++)
-            {
-                printf("Node(%i) = %f ", i, network.graph[i].val);
-            }
-            printf("\nReturns %c\n", readResult(network, numberCharacters));
-            for(int p = 0; p < 4; p++)
-            {
-                printf("The target must be %i\n ", (int) targets[j][p]);
-            }
             retro(network, targets[j], 0.1);
         }
     }
@@ -235,8 +267,8 @@ int main()
         exit(-1);
     }
     layers[0] = NUMBERELEMENTS + 1;
-    layers[1] = 100;
-    layers[2] = 100;
+    layers[1] = 50;
+    layers[2] = 50;
     layers[3] = NUMBERCHARACTERS + 1;
 
     int laylen = NUMBERLAYER;
@@ -295,38 +327,39 @@ int main()
 
     double** target = initializeTargets(NUMBERCHARACTERS);
 
+    //propagation(net, inputs[0]);
 
     train(net, inputs, target, NUMBERCHARACTERS);
-
-    /*printf("The recognize character isss : %c.\n", readResult(net, NUMBERCHARACTERS));
-    propagation(net, inputs[0]);*/
+    SaveNetwork(net);
+    FreeNetwork(net);
+    net = LoadNetwork();
+    SaveNetwork(net);
+    printf("The recognize character isss : %c.\n", readResult(net, NUMBERCHARACTERS));
+    propagation(net, inputs[0]);
 
     printf("\n");
     for(int index = 0; index < NUMBERCHARACTERS; index++)
     {
+        propagation(net, inputs[index]);
         for(int yo = 0; yo < NUMBERELEMENTS; yo++)
         {
             printf("%i ", (int) inputs[index][yo]);
         }
         printf("\n");
 
-        printf("Result  = ");
+        printf("Result: ");
         int mar = 0;
         for(int g = 0; g < net.laylenght - 1; g++)
         {
             mar += net.layers[g];
         }
-        for(int v = mar + 1; v < mar + net.layers[net.laylenght - 1]; v++)
+        for(int v = mar + 1; v < net.graphlen; v++)
         {
             printf("Node(%i) = %f ", v, net.graph[v].val);
         }
         printf("\n");
-        propagation(net, inputs[index]);
         printf("The recognize character is : %c.\n", readResult(net, NUMBERCHARACTERS));
     }
-
-
-    SaveNetwork(net);
 
     free(inputs);
     free(target);

@@ -2,7 +2,7 @@
 
 CC=gcc
 
-CPPFLAGS= `pkg-config --cflags sdl` -MMD `pkg-config --cflags --libs gtk+-2.0`
+CPPFLAGS= `pkg-config --cflags sdl` -MMD `pkg-config --cflags --libs gtk+-2.0` -lm
 CFLAGS=  -Wall -Wextra -g -std=c99 -O3 -IImageProcessing/ -IImage_BMP/ -INeuralNetwork/ -IRestore/ -IInterface/
 LDFLAGS=
 EXEC=main
@@ -10,6 +10,7 @@ SRC= main.c ImageProcessing/BlackAndWhite.c Image_BMP/BMP.c Image_BMP/pixel_oper
 
 
 
+>>>>>>> 80e076e502e28700831f843b427d0831ab9562b0
 LDLIBS= `pkg-config --libs sdl` -lSDL_image `pkg-config --cflags --libs gtk+-2.0`
 OBJ= $(SRC:.c=.o)
 
